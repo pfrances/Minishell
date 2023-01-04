@@ -3,54 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pfrances <pfrances@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:35:57 by pfrances          #+#    #+#             */
-/*   Updated: 2022/12/14 17:18:57 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/04 20:07:37 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_tokens(char **tokens)
+bool	init_lexer(t_lexer *lexer)
 {
-	size_t	i;
-
-	if (tokens == NULL)
-		return ;
-	i = 0;
-	while (tokens[i] != NULL)
+	lexer->tkn_types_array = ft_split_charset(TOKENS_CHARSET, SPACES_CHARSET);
+	if (lexer->tkn_types_array == NULL)
+		return (false);
+	lexer->input = readline(" > ");
+	if (lexer->input == NULL)
 	{
-		ft_printf("%s\n", tokens[i]);
-		i++;
+		free_array((void **)lexer->tkn_types_array);
+		return (false);
 	}
+	add_history(lexer->input);
+	lexer->bracket_count = 0;
+	lexer->index = 0;
+	lexer->list = NULL;
+	return (true);
 }
 
-char	**split_in_tokens(char *input)
+bool	lexer_job(t_lexer *lexer)
 {
-	char	**tokens;
-	size_t	nb_tokens;
-
-	tokens = ft_split_charset(input, SPACES_CHARSET);
-	if (tokens == NULL)
-		return (NULL);
-	return (tokens);
-}
-
-int	lexer(void)
-{
-	char	*input;
-	char	**tokens;
-
-	// input = get_next_line(STDIN_FILENO);
-	input = readline(" > ");
-	if (input == NULL)
-		return (0);
-	tokens = split_in_tokens(input);
-	if (tokens == NULL)
-		return (1);
-	print_tokens(tokens);
-	free(input);
-	free_array((void **)tokens);
-	return (0);
+	if (init_lexer(lexer) == false)
+		return (false);
+	while (lexer->input[lexer->index] != '\0')
+	{
+		if (ft_isspace(lexer->input[lexer->index]))
+			lexer->index++;
+		else if (manage_tokens(lexer) == false)
+			return (false);
+		if (lexer->input[lexer->index] == '\0' && lexer->bracket_count > 0)
+			if (read_new_line(lexer) == false)
+				return (false);
+	}
+	return (true);
 }
