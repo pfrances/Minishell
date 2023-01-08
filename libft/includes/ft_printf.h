@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:17:49 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/07 15:21:53 by pfrances         ###   ########.fr       */
+/*   Updated: 2022/12/07 11:44:14 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 # include <stddef.h>
 # include <unistd.h>
 # include <stdarg.h>
-# include <stdbool.h>
 # define OPTION "cspdiuxX%%"
 # define DECIMAL_BASE "0123456789"
 # define HEXA_BASE_LOW "0123456789abcdef"
 # define HEXA_BASE_UP "0123456789ABCDEF"
+
+typedef enum e_bool
+{
+	FALSE,
+	TRUE
+}		t_bool;
 
 int		ft_printf(const char *str, ...);
 size_t	print_c(char c);

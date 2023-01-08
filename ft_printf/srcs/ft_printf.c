@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:19:48 by pfrances          #+#    #+#             */
-/*   Updated: 2022/12/06 19:23:20 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/07 15:22:32 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ static int	is_an_option(const char *ptr)
 	while (OPTION[i] != '\0')
 	{
 		if (OPTION[i] == *ptr)
-			return (TRUE);
+			return (true);
 		i++;
 	}
 	if (*ptr == 'l' && *(ptr + 1) == 'd')
-		return (TRUE);
-	return (FALSE);
+		return (true);
+	return (false);
 }
 
 static void
@@ -79,7 +79,7 @@ int	ft_printf(const char *str, ...)
 		{
 			result += write(1, str + last_pos, i - last_pos);
 			last_pos = i;
-			if (is_an_option(&str[i + 1]) == TRUE)
+			if (is_an_option(&str[i + 1]) == true)
 				distribute(args, &result, &last_pos, &str[i + 1]);
 			i++;
 		}
