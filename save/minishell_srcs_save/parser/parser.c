@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 19:39:02 by pfrances         ###   ########.fr       */
+/*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
+/*   Updated: 2023/01/09 19:43:01 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-// int	print_error_msg(char *error_msg, int exit_status)
-// {
-// 	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
-// 	return (exit_status);
-// }
+void	free_syntax_tree(t_ast_node *node)
+{
+	if (node == NULL)
+		return ;
+	free_syntax_tree(node->left);
+	free_syntax_tree(node->right);
+	free(node);
+	node = NULL;
+}
 
 void	print_syntax_tree(t_ast_node *node)
 {
@@ -27,16 +31,17 @@ void	print_syntax_tree(t_ast_node *node)
 	print_syntax_tree(node->right);
 }
 
-int	main(int argc, char *argv[])
+bool	parse(t_lexer_node	*lexer_list)
 {
-	t_ast_node	*root;
+	t_ast	ast;
 
-	(void)argv;
-	if (argc == 1)
-	{
-		root = parser_job();
-		if (root == NULL)
-			return (EXIT_FAILURE);
-	}
-	return (0);
+	if (lexer_list == NULL)
+		return (false);
+	ast.root = NULL;
+	ast.root = parse_semi_colon(ast.root, &lexer_list);
+	if (ast.root == NULL || lexer_list != NULL)
+		return (false);
+	print_syntax_tree(ast.root);
+	free_syntax_tree(ast.root);
+	return (true);
 }

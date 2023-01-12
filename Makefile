@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/08 16:16:16 by pfrances         ###   ########.fr        #
+#    Updated: 2023/01/11 16:41:51 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,7 @@ LEXER_SRCS = $(addprefix $(LEXER_SRCS_DIR)/,	lexer_frees.c			\
 												ft_split_charset.c		\
 												lexer_list.c			\
 												lexer_tools.c			\
-												lexer.c					\
-												manage_tokens.c)
+												get_next_token.c)
 LEXER_OBJS = $(subst $(LEXER_SRCS_DIR), $(LEXER_OBJS_DIR), $(LEXER_SRCS:.c=.o))
 ###############################################################################
 ##################################PARSER########################################

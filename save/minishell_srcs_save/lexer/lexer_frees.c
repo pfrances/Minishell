@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 16:33:44 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 16:18:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/07 16:23:05 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,6 @@ void	free_lexer_list(t_lexer_node *list)
 void	free_lexer(t_lexer *lexer)
 {
 	free_array((void **)lexer->tkn_types_array);
-	free_lexer_list(lexer->list_head);
+	free_lexer_list(lexer->list);
 	free(lexer->input);
 }

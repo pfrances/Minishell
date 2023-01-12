@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:34:20 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 16:18:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/11 12:16:32 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,16 @@ typedef struct s_lexer_node
 
 typedef struct s_lexer
 {
-	t_lexer_node	*list_head;
+	t_lexer_node	*list;
 	char			*input;
 	size_t			index;
 	int				bracket_count;
 	t_token_types	current_token_type;
-	t_token			current_token;
-	t_lexer_node	*current_node;
 	char			**tkn_types_array;
 }	t_lexer;
 
 /*				lexer.c					*/
-bool			init_lexer(t_lexer *lexer);
+bool			lexer_job(t_lexer *lexer);
 
 /*				lexer_list.c			*/
 bool			add_node_to_list(t_lexer *lexer, size_t len);
@@ -81,8 +79,8 @@ char			**split_in_tokens(char *input);
 void			print_tokens(t_lexer_node *tokens);
 bool			read_new_line(t_lexer *lexer);
 
-/*				get_next_token.c			*/
-bool			get_next_token(t_lexer *lexer);
+/*				manage_tokens.c			*/
+bool			manage_tokens(t_lexer *lexer);
 
 /*				ft_split_charset.c		*/
 char			**ft_split_charset(char *input, const char *charset);
