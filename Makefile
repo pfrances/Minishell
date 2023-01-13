@@ -3,17 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
+#    By: pfrances <pfrances@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/11 16:41:51 by pfrances         ###   ########.fr        #
+#    Updated: 2023/01/13 11:32:30 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -g -Wall -Wextra -Werror
-LIBRARY = -L/usr/lib/x86_64-linux-gnu -lreadline
 INCLUDE = -I includes -I/usr/include/readline/
 
 FT_PRINTF_DIR = ./ft_printf
@@ -46,23 +45,31 @@ PARSER_SRCS = $(addprefix $(PARSER_SRCS_DIR)/,	parser.c				\
 												parse_nodes2.c)
 PARSER_OBJS = $(subst $(PARSER_SRCS_DIR), $(PARSER_OBJS_DIR), $(PARSER_SRCS:.c=.o))
 ###############################################################################
+OS = $(shell uname -s)
+
+ifeq ($(OS),Linux)
+READLINE = -L/usr/lib/x86_64-linux-gnu -lreadline
+else
+READLINE = -L$(shell brew --prefix readline)/lib -lreadline
+endif
+
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(FT_PRINTF)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBRARY) $(INCLUDE) $(LIBFT) $(FT_PRINTF) -o $(NAME)
-
-$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-	@mkdir -p $(OBJS_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIBRARY) -c $< -o $@
+	$(CC) $(CFLAGS) $(OBJS) $(READLINE) $(INCLUDE) $(LIBFT) $(FT_PRINTF) -o $(NAME)
 
 $(LEXER_OBJS_DIR)/%.o: $(LEXER_SRCS_DIR)/%.c
 	@mkdir -p $(LEXER_OBJS_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIBRARY) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(PARSER_OBJS_DIR)/%.o: $(PARSER_SRCS_DIR)/%.c
 	@mkdir -p $(PARSER_OBJS_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIBRARY) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
+	@mkdir -p $(OBJS_DIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(LIBFT):
 	make -C $(LIBFT_DIR) bonus
