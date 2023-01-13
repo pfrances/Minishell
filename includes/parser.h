@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pfrances <pfrances@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 12:11:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/13 12:10:35 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/13 12:41:54 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_ast_node	*parse_command(t_lexer *lexer);
 t_ast_node	*create_node(t_token token);
 
 
-void		free_syntax_tree(t_ast_node *node);
+void		free_syntax_tree(t_ast_node **node);
 void		print_syntax_tree(t_ast_node *node);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:04:23 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 16:58:02 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/13 13:19:47 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,12 @@ bool	get_next_token(t_lexer *lexer)
 	while (ft_isspace(lexer->input[lexer->index]))
 		lexer->index++;
 	lexer->current_token_type = get_token_type(lexer, lexer->index);
+	while (lexer->current_token_type == TOKEN_EOF)
+	{
+		lexer->current_token_type = get_token_type(lexer, lexer->index);
+		if (read_new_line(lexer) == false)
+			return (false);
+	}
 	if (lexer->current_token_type == TOKEN_COMMAND)
 	{
 		if (command_tokens_paterns(lexer) == false)

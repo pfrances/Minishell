@@ -3,23 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pfrances <pfrances@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/13 12:15:39 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/13 13:03:22 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-void	free_syntax_tree(t_ast_node *node)
+void	free_syntax_tree(t_ast_node **node)
 {
-	if (node == NULL)
+	if (node == NULL || *node == NULL)
 		return ;
-	free_syntax_tree(node->left);
-	free_syntax_tree(node->right);
-	free(node);
-	node = NULL;
+	free_syntax_tree(&(*node)->left);
+	free_syntax_tree(&(*node)->right);
+	free((*node)->token.lexem);
+	(*node)->token.lexem = NULL;
+	free(*node);
+	*node = NULL;
 }
 
 t_ast_node	*create_node(t_token token)
@@ -81,7 +83,7 @@ t_ast_node	*parse_input_output(t_ast_node *root, t_lexer *lexer)
 	if (lexer->current_token_type != TOKEN_EOF)
 		root = parse_bracket(root, lexer);
 	while (root != NULL
-		&& (lexer->current_token_type == TOKEN_INPUT 
+		&& (lexer->current_token_type == TOKEN_INPUT
 		|| lexer->current_token_type == TOKEN_OUTPUT
 		|| lexer->current_token_type == TOKEN_OUTPUT_ADD))
 	{
@@ -129,8 +131,8 @@ t_ast_node	*parse_and_or(t_ast_node *root, t_lexer *lexer)
 
 	if (lexer->current_token_type != TOKEN_EOF)
 		root = parse_pipe(root, lexer);
-	while (root != NULL && 
-		(lexer->current_token_type == TOKEN_AND 
+	while (root != NULL &&
+		(lexer->current_token_type == TOKEN_AND
 		|| lexer->current_token_type == TOKEN_OR))
 	{
 		new_node = create_node(lexer->current_token);
@@ -160,19 +162,13 @@ t_ast_node	*parse_semi_colon(t_ast_node *root, t_lexer *lexer)
 		if (new_node == NULL)
 			break ;
 		new_node->left = root;
-		if (get_next_token(lexer))
+		if (get_next_token(lexer) && lexer->current_token_type != TOKEN_EOF)
 		{
 			new_node->right = parse_and_or(root, lexer);
 			if (new_node->right == NULL)
 				break ;
 		}
 		root = new_node;
-	}
-	if (lexer->current_token_type != TOKEN_EOF)
-	{
-		free_lexer(lexer);
-		free_syntax_tree(root);
-		return (NULL);
 	}
 	return (root);
 }
@@ -204,8 +200,11 @@ t_ast_node	*parser_job()
 		return (NULL);
 	root = NULL;
 	root = parse_semi_colon(root, &lexer);
-	print_syntax_tree(root);
-	free_lexer(&lexer);
-	free_syntax_tree(root);
+	if (lexer.current_token_type == TOKEN_EOF)
+	{
+		print_syntax_tree(root);
+		// free_lexer(&lexer);
+		// free_syntax_tree(&root);
+	}
 	return (root);
 }
