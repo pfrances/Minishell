@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:04:23 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/13 13:19:47 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/15 12:17:19 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,6 @@ bool	command_tokens_paterns(t_lexer *lexer)
 	return (add_node_to_list(lexer, i));
 }
 
-bool	check_bracket(t_lexer *lexer)
-{
-	if (lexer->current_token_type == TOKEN_OPEN_BRACKET)
-		lexer->bracket_count++;
-	else if (lexer->current_token_type == TOKEN_CLOSE_BRACKET)
-		lexer->bracket_count--;
-	return (lexer->bracket_count >= 0);
-}
-
 bool	other_tokens_patterns(t_lexer *lexer)
 {
 	size_t	token_len;
@@ -80,17 +71,34 @@ bool	other_tokens_patterns(t_lexer *lexer)
 	return (false);
 }
 
+bool	check_endline(t_lexer *lexer)
+{
+	t_token_types	last_token;
+
+	if (lexer->current_token_type != TOKEN_EOF)
+		return (true);
+	last_token = lexer->current_node->token.type;
+	if (lexer->bracket_count == 0)
+	{
+		if (last_token == TOKEN_SEMICOLON || last_token == TOKEN_COMMAND)
+			return (true);
+	}
+	while (lexer->current_token_type == TOKEN_EOF)
+	{
+		if (read_new_line(lexer) == false)
+			return (false);
+		lexer->current_token_type = get_token_type(lexer, lexer->index);
+	}
+	return (true);
+}
+
 bool	get_next_token(t_lexer *lexer)
 {
 	while (ft_isspace(lexer->input[lexer->index]))
 		lexer->index++;
 	lexer->current_token_type = get_token_type(lexer, lexer->index);
-	while (lexer->current_token_type == TOKEN_EOF)
-	{
-		lexer->current_token_type = get_token_type(lexer, lexer->index);
-		if (read_new_line(lexer) == false)
-			return (false);
-	}
+	if (check_endline(lexer) == false)
+		return (false);
 	if (lexer->current_token_type == TOKEN_COMMAND)
 	{
 		if (command_tokens_paterns(lexer) == false)

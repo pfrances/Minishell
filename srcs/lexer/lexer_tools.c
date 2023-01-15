@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:07:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/07 16:23:05 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/15 12:01:01 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,13 @@ char	*ft_strjoin_with_free(char *s1, char const *s2)
 	return (result);
 }
 
-char	**split_in_tokens(char *input)
+bool	check_bracket(t_lexer *lexer)
 {
-	char	**tokens;
-
-	tokens = ft_split_charset(input, SPACES_CHARSET);
-	if (tokens == NULL)
-		return (NULL);
-	return (tokens);
+	if (lexer->current_token_type == TOKEN_OPEN_BRACKET)
+		lexer->bracket_count++;
+	else if (lexer->current_token_type == TOKEN_CLOSE_BRACKET)
+		lexer->bracket_count--;
+	return (lexer->bracket_count >= 0);
 }
 
 t_token_types	get_token_type(t_lexer *lexer, size_t index)

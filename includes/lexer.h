@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:34:20 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 16:18:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/15 12:01:16 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_lexer_node	*last_lexer_list(t_lexer_node *node);
 
 /*				lexer_tools.c			*/
 t_token_types	get_token_type(t_lexer *lexer, size_t index);
-char			**split_in_tokens(char *input);
+bool			check_bracket(t_lexer *lexer);
 void			print_tokens(t_lexer_node *tokens);
 bool			read_new_line(t_lexer *lexer);
 

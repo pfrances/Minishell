@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 19:39:02 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/15 12:12:32 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,17 @@ void	print_syntax_tree(t_ast_node *node)
 
 int	main(int argc, char *argv[])
 {
+	t_lexer		lexer;
 	t_ast_node	*root;
 
 	(void)argv;
 	if (argc == 1)
 	{
-		root = parser_job();
+		root = parser_job(&lexer);
 		if (root == NULL)
 			return (EXIT_FAILURE);
+		free_syntax_tree(&root);
+		free_lexer(&lexer);
 	}
 	return (0);
 }

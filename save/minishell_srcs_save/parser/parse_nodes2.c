@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 16:11:49 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 12:42:40 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/15 11:56:37 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ t_ast_node	*parse_semi_colon(t_ast_node *root, t_lexer_node **lexer_list)
 			return (NULL);
 		new_node->left = root;
 		*lexer_list = (*lexer_list)->next;
-		if (*lexer_list != NULL)
-
 		if (*lexer_list != NULL)
 		{
 			new_node->right = parse_and_or(new_node->right, lexer_list);

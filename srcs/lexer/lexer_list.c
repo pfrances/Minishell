@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 18:08:56 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/11 16:18:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/13 16:06:08 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,15 @@ bool	add_node_to_list(t_lexer *lexer, size_t len)
 
 	if (len == 0)
 		return (true);
-	token_content = ft_strndup(&lexer->input[lexer->index], len);
-	if (token_content == NULL)
+	token_content = NULL;
+	if (lexer->current_token_type != TOKEN_EOF)
 	{
-		free_lexer_list(lexer->list_head);
-		return (false);
+		token_content = ft_strndup(&lexer->input[lexer->index], len);
+		if (token_content == NULL)
+		{
+			free_lexer_list(lexer->list_head);
+			return (false);
+		}
 	}
 	new_node = create_new_lexer_node(lexer->current_token_type, token_content);
 	if (new_node == NULL)
