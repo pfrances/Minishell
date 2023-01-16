@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:34:20 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 12:41:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:28:15 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define TOKENS_LEN_MAX 2
 # define PROMPT_INDENT " > "
 # define ERROR_SYNTAX_MSG "Syntax error - unexpected token: "
+# define ERROR_ALLOCATION_MSG "Failed to allocate memory"
 
 typedef enum e_token_types
 {
@@ -59,9 +60,11 @@ typedef struct s_lexer
 	size_t			index;
 	int				bracket_count;
 	t_token_types	current_token_type;
-	t_token			current_token;
+	t_token			*current_token;
 	t_lexer_node	*current_node;
 	char			**tkn_types_array;
+	bool			ast_error;
+	bool			ast_syntax_error;
 }	t_lexer;
 
 /*				lexer.c					*/
@@ -73,8 +76,7 @@ t_lexer_node	*last_lexer_list(t_lexer_node *node);
 
 /*				lexer_tools.c			*/
 t_token_types	get_token_type(t_lexer *lexer, size_t index);
-bool			check_bracket(t_lexer *lexer);
-void			print_tokens(t_lexer_node *tokens);
+void			update_bracket_count(t_lexer *lexer);
 bool			get_command_line_ending(t_lexer *lexer);
 
 /*				get_next_token.c			*/

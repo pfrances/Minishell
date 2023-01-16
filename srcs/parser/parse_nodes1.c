@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 16:11:49 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 09:43:12 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 19:52:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ t_ast_node	*parse_command(t_lexer *lexer)
 {
 	t_ast_node	*new_node;
 
-	if (lexer->current_token_type == TOKEN_COMMAND)
+	if (!lexer->ast_error && lexer->current_token_type == TOKEN_COMMAND)
 	{
-		new_node = create_node(lexer->current_token);
+		new_node = create_node(lexer);
 		if (get_next_token(lexer))
 			return (new_node);
 	}
+	lexer->ast_error = true;
+	lexer->ast_syntax_error = true;
 	return (NULL);
 }
 
@@ -29,7 +31,7 @@ t_ast_node	*parse_bracket(t_ast_node *root, t_lexer *lexer)
 {
 	t_ast_node	*new_node;
 
-	if (lexer->current_token_type == TOKEN_OPEN_BRACKET)
+	if (!lexer->ast_error && lexer->current_token_type == TOKEN_OPEN_BRACKET)
 	{
 		if (get_next_token(lexer) == false)
 			return (root);
@@ -38,7 +40,7 @@ t_ast_node	*parse_bracket(t_ast_node *root, t_lexer *lexer)
 			&& get_next_token(lexer))
 			return (new_node);
 	}
-	else if (lexer->current_token_type != TOKEN_EOF)
+	else if (!lexer->ast_error && lexer->current_token_type != TOKEN_EOF)
 		root = parse_command(lexer);
 	return (root);
 }

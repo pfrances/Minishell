@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:04:23 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 14:00:18 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:29:01 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ bool	get_other_token(t_lexer *lexer)
 		if (ft_strncmp(&lexer->input[lexer->index],
 				lexer->tkn_types_array[i], token_len) == 0)
 		{
-			if (check_bracket(lexer) == false)
-				return (false);
+			update_bracket_count(lexer);
 			return (add_node_to_list(lexer, token_len));
 		}
 		i++;
@@ -98,6 +97,7 @@ bool	check_endline(t_lexer *lexer)
 
 bool	get_next_token(t_lexer *lexer)
 {
+	lexer->ast_error = true;
 	while (ft_isspace(lexer->input[lexer->index]))
 		lexer->index++;
 	lexer->current_token_type = get_token_type(lexer, lexer->index);
@@ -114,6 +114,7 @@ bool	get_next_token(t_lexer *lexer)
 			return (false);
 	}
 	lexer->current_node = last_lexer_list(lexer->list_head);
-	lexer->current_token = lexer->current_node->token;
+	lexer->current_token = &lexer->current_node->token;
+	lexer->ast_error = false;
 	return (true);
 }
