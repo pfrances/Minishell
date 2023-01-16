@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 12:11:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:12:26 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 12:17:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 typedef struct s_ast_node
 {
 	t_token				token;
-	struct s_ast_node	*parent;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 }	t_ast_node;
@@ -32,7 +31,6 @@ t_ast_node	*parser_job(t_lexer *lexer);
 t_ast_node	*parse_semi_colon(t_ast_node *root, t_lexer *lexer);
 t_ast_node	*parse_and_or(t_ast_node *root, t_lexer *lexer);
 t_ast_node	*parse_pipe(t_ast_node *root, t_lexer *lexer);
-t_ast_node	*parse_input_output(t_ast_node *root, t_lexer *lexer);
 t_ast_node	*parse_bracket(t_ast_node *root, t_lexer *lexer);
 t_ast_node	*parse_command(t_lexer *lexer);
 

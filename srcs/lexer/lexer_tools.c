@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:07:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:01:01 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 09:46:21 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ t_token_types	get_token_type(t_lexer *lexer, size_t index)
 	return (TOKEN_EOF);
 }
 
-bool	read_new_line(t_lexer *lexer)
+bool	get_command_line_ending(t_lexer *lexer)
 {
 	char	*input;
 
@@ -82,6 +82,8 @@ bool	read_new_line(t_lexer *lexer)
 	if (input == NULL)
 		return (false);
 	add_history(input);
+	if (lexer->bracket_count > 0)
+		lexer->input = ft_strjoin_with_free(lexer->input, "; ");
 	lexer->input = ft_strjoin_with_free(lexer->input, input);
 	if (lexer->input == NULL)
 		return (false);

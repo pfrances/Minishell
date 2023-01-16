@@ -6,16 +6,11 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/16 16:20:59 by pfrances          #+#    #+#             */
-/*   Updated: 2022/10/03 17:53:39 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 13:15:44 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-size_t	ft_isspace(char c)
-{
-	return ((c >= '\t' && c <= '\r') || c == ' ');
-}
 
 static char	*check_sign(char *str_nbr, int *sign)
 {

@@ -6,17 +6,17 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:12:32 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 12:01:06 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-// int	print_error_msg(char *error_msg, int exit_status)
-// {
-// 	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
-// 	return (exit_status);
-// }
+void	print_error_msg(t_lexer *lexer)
+{
+	ft_putstr_fd(ERROR_SYNTAX_MSG, STDERR_FILENO);
+	ft_putendl_fd(lexer->current_token.lexem, STDERR_FILENO);
+}
 
 void	print_syntax_tree(t_ast_node *node)
 {

@@ -14,6 +14,7 @@
 # define LIBFT_H
 # include <stddef.h>
 # include <limits.h>
+# include <stdbool.h>
 
 typedef struct s_list
 {
@@ -109,6 +110,6 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
-size_t	ft_isspace(char c);
+bool	ft_isspace(char c);
 
 #endif

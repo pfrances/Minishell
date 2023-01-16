@@ -6,49 +6,13 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:04:23 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:17:19 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 14:00:18 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
-bool	get_quotes_content(t_lexer *lexer, size_t *i)
-{
-	char	start;
-
-	start = lexer->input[lexer->index + *i];
-	if (start != '\"' && start != '\'')
-		return (true);
-	(*i)++;
-	while (lexer->input[lexer->index + *i] != start)
-	{
-		if (lexer->input[lexer->index + *i] == '\0')
-		{
-			if (read_new_line(lexer) == false)
-				return (false);
-		}
-		else
-			(*i)++;
-	}
-	(*i)++;
-	return (true);
-}
-
-bool	command_tokens_paterns(t_lexer *lexer)
-{
-	size_t	i;
-
-	i = 0;
-	while (get_token_type(lexer, lexer->index + i) == TOKEN_COMMAND)
-	{
-		if (get_quotes_content(lexer, &i) == false)
-			return (false);
-		i++;
-	}
-	return (add_node_to_list(lexer, i));
-}
-
-bool	other_tokens_patterns(t_lexer *lexer)
+bool	get_other_token(t_lexer *lexer)
 {
 	size_t	token_len;
 	size_t	i;
@@ -71,6 +35,45 @@ bool	other_tokens_patterns(t_lexer *lexer)
 	return (false);
 }
 
+bool	get_quotes_content(t_lexer *lexer, size_t *i)
+{
+	char	start;
+
+	start = lexer->input[lexer->index + *i];
+	if (start != '\"' && start != '\'')
+		return (true);
+	(*i)++;
+	while (lexer->input[lexer->index + *i] != start)
+	{
+		if (lexer->input[lexer->index + *i] == '\0')
+		{
+			if (get_command_line_ending(lexer) == false)
+				return (false);
+		}
+		else
+			(*i)++;
+	}
+	return (true);
+}
+
+bool	get_command_token(t_lexer *lexer)
+{
+	size_t	i;
+
+	i = 0;
+	while (get_token_type(lexer, lexer->index + i) == TOKEN_COMMAND)
+	{
+		if (get_quotes_content(lexer, &i) == false)
+			return (false);
+		i++;
+	}
+	while (i > 0 && ft_isspace(lexer->input[lexer->index + i]))
+		i--;
+	if (check_redirection(&lexer->input[lexer->index], i) == false)
+		return (false);
+	return (add_node_to_list(lexer, i));
+}
+
 bool	check_endline(t_lexer *lexer)
 {
 	t_token_types	last_token;
@@ -80,12 +83,13 @@ bool	check_endline(t_lexer *lexer)
 	last_token = lexer->current_node->token.type;
 	if (lexer->bracket_count == 0)
 	{
-		if (last_token == TOKEN_SEMICOLON || last_token == TOKEN_COMMAND)
+		if (last_token == TOKEN_SEMICOLON || last_token == TOKEN_COMMAND
+			|| last_token == TOKEN_CLOSE_BRACKET)
 			return (true);
 	}
 	while (lexer->current_token_type == TOKEN_EOF)
 	{
-		if (read_new_line(lexer) == false)
+		if (get_command_line_ending(lexer) == false)
 			return (false);
 		lexer->current_token_type = get_token_type(lexer, lexer->index);
 	}
@@ -101,12 +105,12 @@ bool	get_next_token(t_lexer *lexer)
 		return (false);
 	if (lexer->current_token_type == TOKEN_COMMAND)
 	{
-		if (command_tokens_paterns(lexer) == false)
+		if (get_command_token(lexer) == false)
 			return (false);
 	}
 	else
 	{
-		if (other_tokens_patterns(lexer) == false)
+		if (get_other_token(lexer) == false)
 			return (false);
 	}
 	lexer->current_node = last_lexer_list(lexer->list_head);

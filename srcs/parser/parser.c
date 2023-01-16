@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:39:15 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 12:01:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ t_ast_node	*create_node(t_token token)
 	if (node == NULL)
 		return (NULL);
 	node->token = token;
-	node->parent = NULL;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
@@ -58,7 +57,6 @@ bool	init_lexer(t_lexer *lexer)
 		return (false);
 	}
 	return (true);
-
 }
 
 t_ast_node	*parser_job(t_lexer *lexer)
@@ -73,6 +71,7 @@ t_ast_node	*parser_job(t_lexer *lexer)
 		print_syntax_tree(root);
 	else
 	{
+		print_error_msg(lexer);
 		free_syntax_tree(&root);
 		free_lexer(lexer);
 		return (NULL);

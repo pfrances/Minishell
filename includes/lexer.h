@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:34:20 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/15 12:01:16 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 12:41:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,14 @@
 # include <readline/history.h>
 
 # define SPACES_CHARSET " \n\t\v\f\r"
-# define TOKENS_CHARSET "<< < >> > && & || | ; ( )"
+# define TOKENS_CHARSET "&& || | ; ( )"
 # define TOKENS_LEN_MAX 2
 # define PROMPT_INDENT " > "
+# define ERROR_SYNTAX_MSG "Syntax error - unexpected token: "
 
 typedef enum e_token_types
 {
-	TOKEN_INPUT_STD,
-	TOKEN_INPUT,
-	TOKEN_OUTPUT_ADD,
-	TOKEN_OUTPUT,
 	TOKEN_AND,
-	TOKEN_BG_JOB,
 	TOKEN_OR,
 	TOKEN_PIPE,
 	TOKEN_SEMICOLON,
@@ -79,17 +75,23 @@ t_lexer_node	*last_lexer_list(t_lexer_node *node);
 t_token_types	get_token_type(t_lexer *lexer, size_t index);
 bool			check_bracket(t_lexer *lexer);
 void			print_tokens(t_lexer_node *tokens);
-bool			read_new_line(t_lexer *lexer);
+bool			get_command_line_ending(t_lexer *lexer);
 
 /*				get_next_token.c			*/
 bool			get_next_token(t_lexer *lexer);
 
-/*				ft_split_charset.c		*/
+/*				redirection_check.c			*/
+bool			check_redirection(char *command, size_t len);
+
+/*				ft_split_charset.c			*/
 char			**ft_split_charset(char *input, const char *charset);
 
-/*				frees.c					*/
+/*				frees.c						*/
 void			free_array(void **array);
 void			free_lexer_list(t_lexer_node *list);
 void			free_lexer(t_lexer *lexer);
+
+/*				main.c						*/
+void			print_error_msg(t_lexer *lexer);
 
 #endif

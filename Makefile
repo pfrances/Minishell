@@ -6,13 +6,13 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/13 16:24:04 by pfrances         ###   ########.fr        #
+#    Updated: 2023/01/16 12:36:14 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 INCLUDE = -I includes -I/usr/include/readline/
 
 FT_PRINTF_DIR = ./ft_printf
@@ -31,6 +31,7 @@ OBJS = $(MAIN_OBJS) $(LEXER_OBJS) $(PARSER_OBJS)
 LEXER_SRCS_DIR = $(SRCS_DIR)/lexer
 LEXER_OBJS_DIR = $(OBJS_DIR)/lexer
 LEXER_SRCS = $(addprefix $(LEXER_SRCS_DIR)/,	lexer_frees.c			\
+												redirection_check.c		\
 												ft_split_charset.c		\
 												lexer_list.c			\
 												lexer_tools.c			\
