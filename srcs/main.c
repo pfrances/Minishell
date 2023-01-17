@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 22:37:19 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/17 11:18:19 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 void	print_error_msg(t_lexer *lexer)
 {
-	if (lexer->ast_syntax_error)
+	if (lexer->error.type == SYNTAX_ERROR)
 	{
 		ft_putstr_fd(ERROR_SYNTAX_MSG, STDERR_FILENO);
-		ft_putendl_fd(lexer->current_token->lexem, STDERR_FILENO);
+		write(STDERR_FILENO, lexer->input, lexer->error.index);
+		write(STDERR_FILENO, "==>", ft_strlen("==>"));
+		ft_putendl_fd(lexer->input + lexer->error.index, STDERR_FILENO);
 	}
-	else
+	else if (lexer->error.type == ALLOCATION_FAILED)
 		ft_putendl_fd(ERROR_ALLOCATION_MSG, STDERR_FILENO);
 }
 
@@ -53,11 +55,14 @@ int	main(int argc, char *argv[])
 	(void)argv;
 	if (argc == 1)
 	{
-		root = parser_job(&lexer);
-		if (root == NULL)
-			return (EXIT_FAILURE);
-		free_syntax_tree(&root);
-		free_lexer(&lexer);
+		while (1)
+		{
+			root = parser_job(&lexer);
+			if (lexer.error.type == ALLOCATION_FAILED)
+				return (EXIT_FAILURE);
+			free_syntax_tree(&root);
+			free_lexer(&lexer);
+		}
 	}
 	return (0);
 }

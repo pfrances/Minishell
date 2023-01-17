@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 22:38:37 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/17 11:18:26 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_ast_node	*create_node(t_lexer *lexer)
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
 	{
-		lexer->ast_error = true;
+		lexer->error.type = ALLOCATION_FAILED;
 		return (NULL);
 	}
 	node->token = lexer->current_token;
@@ -44,7 +44,7 @@ bool	init_lexer(t_lexer *lexer)
 	lexer->tkn_types_array = ft_split_charset(TOKENS_CHARSET, SPACES_CHARSET);
 	if (lexer->tkn_types_array == NULL)
 		return (false);
-	lexer->input = readline(" > ");
+	lexer->input = readline("Minishell > ");
 	if (lexer->input == NULL)
 	{
 		free_array((void **)lexer->tkn_types_array);
@@ -53,14 +53,37 @@ bool	init_lexer(t_lexer *lexer)
 	lexer->bracket_count = 0;
 	lexer->index = 0;
 	lexer->list_head = NULL;
-	lexer->ast_error = false;
-	lexer->ast_syntax_error = false;
+	lexer->error.type = NONE;
+	lexer->error.index = 0;
 	if (get_next_token(lexer) == false)
 	{
 		free_lexer(lexer);
 		return (false);
 	}
 	return (true);
+}
+
+bool	check_ast_error(t_lexer *lexer, t_ast_node *root)
+{
+	if (lexer->current_token_type != TOKEN_EOF)
+	{
+		lexer->error.type = SYNTAX_ERROR;
+		lexer->error.index = lexer->index;
+		lexer->error.index -= ft_strlen(lexer->current_token->lexem);
+	}
+	if (lexer->error.type == NONE)
+		return (true);
+	else
+	{
+		print_error_msg(lexer);
+		if (lexer->error.type == ALLOCATION_FAILED)
+		{
+			free_syntax_tree(&root);
+			free_lexer(lexer);
+			clear_history();
+		}
+		return (false);
+	}
 }
 
 t_ast_node	*parser_job(t_lexer *lexer)
@@ -72,15 +95,9 @@ t_ast_node	*parser_job(t_lexer *lexer)
 	root = NULL;
 	root = parse_semi_colon(root, lexer);
 	add_history(lexer->input);
-	ft_printf("input: '%s'\n", lexer->input);
-	if (!lexer->ast_error)
+	if (check_ast_error(lexer, root))
 		print_syntax_tree(root);
-	else
-	{
-		print_error_msg(lexer);
-		free_syntax_tree(&root);
-		free_lexer(lexer);
+	if (lexer->error.type == ALLOCATION_FAILED)
 		return (NULL);
-	}
 	return (root);
 }

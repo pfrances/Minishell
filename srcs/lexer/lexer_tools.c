@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:07:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 22:33:14 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 23:42:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,17 @@ bool	get_command_line_ending(t_lexer *lexer)
 
 	input = readline(PROMPT_INDENT);
 	if (input == NULL)
+	{
+		lexer->error.type = ALLOCATION_FAILED;
 		return (false);
+	}
 	lexer->input = join_to_command_ending(lexer->input, input, " ");
 	free(input);
 	lexer->index++;
 	if (lexer->input == NULL || update_last_command(lexer) == false)
+	{
+		lexer->error.type = ALLOCATION_FAILED;
 		return (false);
+	}
 	return (true);
 }

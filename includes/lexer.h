@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:34:20 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 22:28:15 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/17 11:12:32 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # define TOKENS_CHARSET "&& || | ; ( )"
 # define TOKENS_LEN_MAX 2
 # define PROMPT_INDENT " > "
-# define ERROR_SYNTAX_MSG "Syntax error - unexpected token: "
-# define ERROR_ALLOCATION_MSG "Failed to allocate memory"
+# define ERROR_SYNTAX_MSG "	Syntax error - unexpected token: "
+# define ERROR_ALLOCATION_MSG "	Failed to allocate memory"
 
 typedef enum e_token_types
 {
@@ -40,11 +40,24 @@ typedef enum e_token_types
 	TOKEN_EOF
 }		t_token_types;
 
+typedef enum e_error_type
+{
+	NONE,
+	ALLOCATION_FAILED,
+	SYNTAX_ERROR
+}	t_error_type;
+
 typedef struct s_token
 {
 	t_token_types	type;
 	char			*lexem;
 }	t_token;
+
+typedef struct s_error
+{
+	t_error_type	type;
+	size_t			index;
+}	t_error;
 
 typedef struct s_lexer_node
 {
@@ -63,8 +76,7 @@ typedef struct s_lexer
 	t_token			*current_token;
 	t_lexer_node	*current_node;
 	char			**tkn_types_array;
-	bool			ast_error;
-	bool			ast_syntax_error;
+	t_error			error;
 }	t_lexer;
 
 /*				lexer.c					*/
@@ -83,7 +95,7 @@ bool			get_command_line_ending(t_lexer *lexer);
 bool			get_next_token(t_lexer *lexer);
 
 /*				redirection_check.c			*/
-bool			check_redirection(char *command, size_t len);
+bool			check_redirection(t_lexer *lexer, char *command, size_t len);
 
 /*				ft_split_charset.c			*/
 char			**ft_split_charset(char *input, const char *charset);

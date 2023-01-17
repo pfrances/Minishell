@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 17:00:10 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/16 23:41:50 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ size_t	skip_quote_content(char *str)
 	return (i++);
 }
 
-bool	check_redirection(char *command, size_t len)
+bool	check_redirection(t_lexer *lexer, char *command, size_t len)
 {
 	size_t	i;
 
@@ -82,7 +82,8 @@ bool	check_redirection(char *command, size_t len)
 				i++;
 			if (is_valid_starting_filename(command[i]) == false)
 			{
-				print_redirection_error_msg(command, i);
+				lexer->error.type = SYNTAX_ERROR;
+				lexer->error.index = lexer->index + i;
 				return (false);
 			}
 		}
