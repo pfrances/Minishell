@@ -6,18 +6,18 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:04:23 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 23:37:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/27 11:38:28 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "minishell.h"
 
 bool	get_other_token(t_lexer *lexer)
 {
 	size_t	token_len;
 	size_t	i;
 
-	if (lexer->current_token_type == TOKEN_EOF)
+	if (lexer->current_token_type == _EOF)
 		return (add_node_to_list(lexer, 1));
 	i = 0;
 	while (lexer->tkn_types_array[i] != NULL)
@@ -60,7 +60,7 @@ bool	get_command_token(t_lexer *lexer)
 	size_t	i;
 
 	i = 0;
-	while (get_token_type(lexer, lexer->index + i) == TOKEN_COMMAND)
+	while (get_token_type(lexer, lexer->index + i) == COMMAND)
 	{
 		if (get_quotes_content(lexer, &i) == false)
 			return (false);
@@ -77,16 +77,16 @@ bool	check_endline(t_lexer *lexer)
 {
 	t_token_types	last_token;
 
-	if (lexer->current_token_type != TOKEN_EOF)
+	if (lexer->current_token_type != _EOF)
 		return (true);
 	last_token = lexer->current_node->token.type;
 	if (lexer->bracket_count == 0)
 	{
-		if (last_token == TOKEN_SEMICOLON || last_token == TOKEN_COMMAND
-			|| last_token == TOKEN_CLOSE_BRACKET)
+		if (last_token == SEMICOLON || last_token == COMMAND
+			|| last_token == CLOSE_BRACKET)
 			return (true);
 	}
-	while (lexer->current_token_type == TOKEN_EOF)
+	while (lexer->current_token_type == _EOF)
 	{
 		if (get_command_line_ending(lexer) == false)
 			return (false);
@@ -102,7 +102,7 @@ bool	get_next_token(t_lexer *lexer)
 	lexer->current_token_type = get_token_type(lexer, lexer->index);
 	if (check_endline(lexer) == false)
 		return (false);
-	if (lexer->current_token_type == TOKEN_COMMAND)
+	if (lexer->current_token_type == COMMAND)
 	{
 		if (get_command_token(lexer) == false)
 			return (false);

@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/16 12:36:14 by pfrances         ###   ########.fr        #
+#    Updated: 2023/01/31 12:59:26 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,29 +22,41 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS_DIR = ./srcs
 OBJS_DIR = ./objs
-MAIN_SRCS = $(SRCS_DIR)/main.c
+MAIN_SRCS = $(addprefix $(SRCS_DIR)/,			main.c						\
+												frees.c						\
+												signal_handling.c			\
+												ft_split_charset.c			\
+												read_from_stdin.c)
 MAIN_OBJS = $(subst $(SRCS_DIR), $(OBJS_DIR), $(MAIN_SRCS:.c=.o))
-SRCS = $(MAIN_SRCS) $(LEXER_SRCS) $(PARSER_SRCS)
-OBJS = $(MAIN_OBJS) $(LEXER_OBJS) $(PARSER_OBJS)
+SRCS = $(MAIN_SRCS) $(LEXER_SRCS) $(PARSER_SRCS) $(COMMANDS_SRCS)
+OBJS = $(MAIN_OBJS) $(LEXER_OBJS) $(PARSER_OBJS) $(COMMANDS_OBJS)
 
 ##################################LEXER########################################
 LEXER_SRCS_DIR = $(SRCS_DIR)/lexer
 LEXER_OBJS_DIR = $(OBJS_DIR)/lexer
-LEXER_SRCS = $(addprefix $(LEXER_SRCS_DIR)/,	lexer_frees.c			\
-												redirection_check.c		\
-												ft_split_charset.c		\
-												lexer_list.c			\
-												lexer_tools.c			\
-												get_next_token.c)
+LEXER_SRCS = $(addprefix $(LEXER_SRCS_DIR)/,	get_next_token.c			\
+												lexer_init.c				\
+												lexer_list.c				\
+												lexer_tools.c				\
+												redirection_check.c)
 LEXER_OBJS = $(subst $(LEXER_SRCS_DIR), $(LEXER_OBJS_DIR), $(LEXER_SRCS:.c=.o))
 ###############################################################################
 ##################################PARSER########################################
 PARSER_SRCS_DIR = $(SRCS_DIR)/parser
 PARSER_OBJS_DIR = $(OBJS_DIR)/parser
-PARSER_SRCS = $(addprefix $(PARSER_SRCS_DIR)/,	parser.c				\
-												parse_nodes1.c			\
-												parse_nodes2.c)
+PARSER_SRCS = $(addprefix $(PARSER_SRCS_DIR)/,	create_node.c				\
+												get_command_path.c			\
+												parse_nodes.c				\
+												parser.c					\
+												set_input_output_args.c)
 PARSER_OBJS = $(subst $(PARSER_SRCS_DIR), $(PARSER_OBJS_DIR), $(PARSER_SRCS:.c=.o))
+###############################################################################
+#################################COMMANDS######################################
+COMMANDS_SRCS_DIR = $(SRCS_DIR)/commands
+COMMANDS_OBJS_DIR = $(OBJS_DIR)/commands
+COMMANDS_SRCS = $(addprefix $(COMMANDS_SRCS_DIR)/,	command_execute.c	\
+													execute_ast.c)
+COMMANDS_OBJS = $(subst $(COMMANDS_SRCS_DIR), $(COMMANDS_OBJS_DIR), $(COMMANDS_SRCS:.c=.o))
 ###############################################################################
 OS = $(shell uname -s)
 
@@ -53,7 +65,6 @@ READLINE = -L/usr/lib/x86_64-linux-gnu -lreadline
 else
 READLINE = -L$(shell brew --prefix readline)/lib -lreadline
 endif
-
 
 all: $(NAME)
 
@@ -66,6 +77,10 @@ $(LEXER_OBJS_DIR)/%.o: $(LEXER_SRCS_DIR)/%.c
 
 $(PARSER_OBJS_DIR)/%.o: $(PARSER_SRCS_DIR)/%.c
 	@mkdir -p $(PARSER_OBJS_DIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(COMMANDS_OBJS_DIR)/%.o: $(COMMANDS_SRCS_DIR)/%.c
+	@mkdir -p $(COMMANDS_OBJS_DIR)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c

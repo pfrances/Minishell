@@ -6,11 +6,11 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 15:00:52 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/06 13:03:16 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/26 19:01:35 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "minishell.h"
 
 static size_t	count_ptr(char *input, const char *charset)
 {

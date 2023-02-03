@@ -1,0 +1,102 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   command_execute.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/03 15:57:47 by pfrances         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+void	open_file(t_cmd *cmd, t_input_output *input_output, bool is_last)
+{
+	if (input_output->type == FILE_INPUT)
+		input_output->fd = open(input_output->filename, O_RDONLY);
+	else if (input_output->type == FILE_OUTPUT)
+	{
+		input_output->fd = open(input_output->filename,
+				O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	}
+	else if (input_output->type == FILE_ADD_OUTPUT)
+	{
+		input_output->fd = open(input_output->filename,
+				O_WRONLY | O_CREAT | O_APPEND, 0664);
+	}
+	if (input_output->fd == -1)
+		perror(input_output->filename);
+	else if (is_last == false)
+		close(input_output->fd);
+	else
+		cmd->output_fd = input_output->fd;
+}
+
+void	set_up_input_output(t_cmd *cmd)
+{
+	size_t	i;
+
+	i = 0;
+	while (cmd->input_output[i] != NULL)
+	{
+		if (cmd->input_output[i]->type == STD_INPUT)
+			;
+		else
+			open_file(cmd, cmd->input_output[i], (cmd->input_output[i + 1] == NULL));
+		i++;
+	}
+	if (cmd->input_fd != STDIN_FILENO)
+	{
+		cmd->input_fd_save = dup(STDIN_FILENO);
+		dup2(cmd->input_fd, STDIN_FILENO);
+		close(cmd->input_fd);
+	}
+	if (cmd->output_fd != STDOUT_FILENO)
+	{
+		cmd->output_fd_save = dup(STDOUT_FILENO);
+		dup2(cmd->output_fd, STDOUT_FILENO);
+		close(cmd->output_fd);
+	}
+}
+
+void	reset_redirection(t_cmd *cmd)
+{
+	if (cmd->input_fd_save != -1)
+	{
+		dup2(cmd->input_fd_save, STDIN_FILENO);
+		close(cmd->input_fd_save);
+	}
+	if (cmd->output_fd_save != -1)
+	{
+		dup2(cmd->output_fd_save, STDOUT_FILENO);
+		close(cmd->output_fd_save);
+	}
+}
+
+int	execute_command(t_cmd *cmd)
+{
+	pid_t	pid;
+	int		status;
+
+	status = 0;
+	set_up_input_output(cmd);
+	pid = fork();
+	if (pid == 0)
+	{
+		set_signal_handling();
+		execve(cmd->path, cmd->args, cmd->envp);
+		perror(cmd->path);
+		exit(EXIT_FAILURE);
+	}
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+		reset_redirection(cmd);
+		return (WEXITSTATUS(status));
+	}
+	perror("fork failed");
+	reset_redirection(cmd);
+	return (WIFEXITED(status));
+}

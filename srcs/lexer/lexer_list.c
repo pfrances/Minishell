@@ -6,11 +6,11 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 18:08:56 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 21:33:47 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/27 11:38:28 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "minishell.h"
 
 t_lexer_node	*last_lexer_list(t_lexer_node *node)
 {
@@ -42,7 +42,10 @@ t_lexer_node	*create_new_lexer_node(t_token_types type, char *content)
 
 	node = malloc(sizeof(t_lexer_node));
 	if (node == NULL)
+	{
+		g_state.status = ALLOCATION_FAILED;
 		return (NULL);
+	}
 	node->token.lexem = content;
 	node->token.type = type;
 	node->next = NULL;
@@ -58,12 +61,12 @@ bool	add_node_to_list(t_lexer *lexer, size_t len)
 	if (len == 0)
 		return (true);
 	token_content = NULL;
-	if (lexer->current_token_type != TOKEN_EOF)
+	if (lexer->current_token_type != _EOF)
 	{
 		token_content = ft_strndup(&lexer->input[lexer->index], len);
 		if (token_content == NULL)
 		{
-			free_lexer_list(lexer->list_head);
+			g_state.status = ALLOCATION_FAILED;
 			return (false);
 		}
 	}
@@ -71,7 +74,7 @@ bool	add_node_to_list(t_lexer *lexer, size_t len)
 	if (new_node == NULL)
 	{
 		free(token_content);
-		free_lexer_list(lexer->list_head);
+		g_state.status = ALLOCATION_FAILED;
 		return (false);
 	}
 	lexer->list_head = add_back_lexer_list(lexer->list_head, new_node);

@@ -6,62 +6,50 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/17 11:18:19 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/01 11:28:34 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "minishell.h"
 
 void	print_error_msg(t_lexer *lexer)
 {
-	if (lexer->error.type == SYNTAX_ERROR)
+	if (g_state.status == SYNTAX_ERROR)
 	{
 		ft_putstr_fd(ERROR_SYNTAX_MSG, STDERR_FILENO);
-		write(STDERR_FILENO, lexer->input, lexer->error.index);
+		write(STDERR_FILENO, lexer->input, g_state.error_index);
 		write(STDERR_FILENO, "==>", ft_strlen("==>"));
-		ft_putendl_fd(lexer->input + lexer->error.index, STDERR_FILENO);
+		ft_putendl_fd(lexer->input + g_state.error_index, STDERR_FILENO);
 	}
-	else if (lexer->error.type == ALLOCATION_FAILED)
+	else if (g_state.status == ALLOCATION_FAILED)
 		ft_putendl_fd(ERROR_ALLOCATION_MSG, STDERR_FILENO);
+	else if (g_state.status == ENV_ERROR)
+		ft_putendl_fd(ENV_ERROR_MSG, STDERR_FILENO);
+	else if (g_state.status == PROGRAM_STOP)
+		ft_putendl_fd(PROGRAM_STOP_MSG, STDERR_FILENO);
 }
 
-void	print_tokens(t_lexer_node *list)
+int	main(int argc, char *argv[], char *envp[])
 {
-	while (list != NULL)
-	{
-		ft_printf("%s", list->token.lexem);
-		list = list->next;
-		if (list != NULL)
-			ft_printf("-->");
-		else
-			ft_printf("\n");
-	}
-}
-
-void	print_syntax_tree(t_ast_node *node)
-{
-	if (node == NULL)
-		return ;
-	print_syntax_tree(node->left);
-	ft_printf("TOKEN: %s\n", node->token->lexem);
-	print_syntax_tree(node->right);
-}
-
-int	main(int argc, char *argv[])
-{
-	t_lexer		lexer;
-	t_ast_node	*root;
+	t_lexer			lexer;
+	t_ast_node		*root;
 
 	(void)argv;
 	if (argc == 1)
 	{
+		set_signal_handling();
 		while (1)
 		{
-			root = parser_job(&lexer);
-			if (lexer.error.type == ALLOCATION_FAILED)
+			root = parser_job(&lexer, envp);
+			if (g_state.status != NORMAL)
+				print_error_msg(&lexer);
+			else
+				execute_ast(root);
+			free_all(&lexer, root);
+			if (g_state.status == ALLOCATION_FAILED
+				|| g_state.status == ENV_ERROR
+				|| g_state.status == PROGRAM_STOP)
 				return (EXIT_FAILURE);
-			free_syntax_tree(&root);
-			free_lexer(&lexer);
 		}
 	}
 	return (0);

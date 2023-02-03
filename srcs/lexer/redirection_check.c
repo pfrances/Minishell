@@ -6,28 +6,28 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/16 23:41:50 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/01/28 16:17:16 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "minishell.h"
 
-void	print_redirection_error_msg(char *command, size_t index)
+void	print_redirection_error_msg(char *cmd, size_t index)
 {
 	ft_putstr_fd(ERROR_SYNTAX_MSG, STDERR_FILENO);
-	write(STDERR_FILENO, &command[index], 1);
-	if (command[index] == '\0')
+	write(STDERR_FILENO, &cmd[index], 1);
+	if (cmd[index] == '\0')
 		write(STDERR_FILENO, "newline", ft_strlen("newline"));
-	else if (command[index] == command[index + 1])
-		write(STDERR_FILENO, &command[index + 1], 1);
+	else if (cmd[index] == cmd[index + 1])
+		write(STDERR_FILENO, &cmd[index + 1], 1);
 	write(STDERR_FILENO, "\n", 1);
 }
 
-bool	is_redirection_token(char *command, size_t *index)
+bool	is_redirection_token(char *cmd, size_t *index)
 {
-	if (command[*index] == '>' || command[*index] == '<')
+	if (cmd[*index] == '>' || cmd[*index] == '<')
 	{
-		if (command[(*index) + 1] == command[*index])
+		if (cmd[(*index) + 1] == cmd[*index])
 		{
 			*index += 2;
 			return (true);
@@ -69,25 +69,25 @@ size_t	skip_quote_content(char *str)
 	return (i++);
 }
 
-bool	check_redirection(t_lexer *lexer, char *command, size_t len)
+bool	check_redirection(t_lexer *lexer, char *cmd, size_t len)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < len)
 	{
-		if (is_redirection_token(command, &i))
+		if (is_redirection_token(cmd, &i))
 		{
-			while (i < len && ft_isspace(command[i]))
+			while (i < len && ft_isspace(cmd[i]))
 				i++;
-			if (is_valid_starting_filename(command[i]) == false)
+			if (is_valid_starting_filename(cmd[i]) == false)
 			{
-				lexer->error.type = SYNTAX_ERROR;
-				lexer->error.index = lexer->index + i;
+				g_state.status = SYNTAX_ERROR;
+				g_state.error_index = lexer->index + i;
 				return (false);
 			}
 		}
-		i += skip_quote_content(&command[i]);
+		i += skip_quote_content(&cmd[i]);
 		i++;
 	}
 	return (true);
