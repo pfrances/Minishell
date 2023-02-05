@@ -6,32 +6,36 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/03 15:57:47 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/05 13:44:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	open_file(t_cmd *cmd, t_input_output *input_output, bool is_last)
+void	open_input_files(t_cmd *cmd, t_input_output *input_output)
 {
 	if (input_output->type == FILE_INPUT)
 		input_output->fd = open(input_output->filename, O_RDONLY);
-	else if (input_output->type == FILE_OUTPUT)
-	{
-		input_output->fd = open(input_output->filename,
-				O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	}
-	else if (input_output->type == FILE_ADD_OUTPUT)
-	{
-		input_output->fd = open(input_output->filename,
-				O_WRONLY | O_CREAT | O_APPEND, 0664);
-	}
 	if (input_output->fd == -1)
 		perror(input_output->filename);
-	else if (is_last == false)
-		close(input_output->fd);
+	if (cmd->input_fd != STDIN_FILENO)
+		close(cmd->input_fd);
+	cmd->input_fd = input_output->fd;
+}
+
+void	open_output_files(t_cmd *cmd, t_input_output *input_output)
+{
+	if (input_output->type == FILE_OUTPUT)
+		input_output->fd = open(input_output->filename,
+				O_WRONLY | O_CREAT | O_TRUNC, 0664);
 	else
-		cmd->output_fd = input_output->fd;
+		input_output->fd = open(input_output->filename,
+				O_WRONLY | O_CREAT | O_APPEND, 0664);
+	if (input_output->fd == -1)
+		perror(input_output->filename);
+	if (cmd->output_fd != STDOUT_FILENO)
+		close(cmd->output_fd);
+	cmd->output_fd = input_output->fd;
 }
 
 void	set_up_input_output(t_cmd *cmd)
@@ -39,12 +43,14 @@ void	set_up_input_output(t_cmd *cmd)
 	size_t	i;
 
 	i = 0;
-	while (cmd->input_output[i] != NULL)
+	while (g_state.error_state == NO_ERROR && cmd->input_output[i] != NULL)
 	{
 		if (cmd->input_output[i]->type == STD_INPUT)
-			;
+			set_here_doc(cmd, cmd->input_output[i]);
+		else if (cmd->input_output[i]->type == FILE_INPUT)
+			open_input_files(cmd, cmd->input_output[i]);
 		else
-			open_file(cmd, cmd->input_output[i], (cmd->input_output[i + 1] == NULL));
+			open_output_files(cmd, cmd->input_output[i]);
 		i++;
 	}
 	if (cmd->input_fd != STDIN_FILENO)
@@ -82,6 +88,8 @@ int	execute_command(t_cmd *cmd)
 
 	status = 0;
 	set_up_input_output(cmd);
+	if (g_state.error_state != NO_ERROR)
+		return (1);
 	pid = fork();
 	if (pid == 0)
 	{

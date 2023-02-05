@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/28 16:17:16 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/04 09:47:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool	check_redirection(t_lexer *lexer, char *cmd, size_t len)
 				i++;
 			if (is_valid_starting_filename(cmd[i]) == false)
 			{
-				g_state.status = SYNTAX_ERROR;
+				g_state.error_state = SYNTAX_ERROR;
 				g_state.error_index = lexer->index + i;
 				return (false);
 			}

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/03 15:57:19 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/05 19:10:22 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,17 @@ t_cmd	*do_allocation(t_cmd_cnt *count)
 	cmd = malloc(sizeof(t_cmd));
 	if (cmd == NULL)
 	{
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 		return (NULL);
 	}
-	cmd->input_output = malloc(sizeof(t_input_output *) * (count->input_output_cnd + 1));
+	cmd->input_output = malloc(sizeof(t_input_output *)
+			* (count->input_output_cnt + 1));
 	cmd->args = malloc(sizeof(char *) * (count->args_cnt + 1));
 	if (cmd->input_output == NULL || cmd->args == NULL)
 	{
 		free(cmd->input_output);
 		free(cmd->args);
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 	}
 	return (cmd);
 }
@@ -66,13 +67,13 @@ t_cmd	*allocate_cmd(char *lexem)
 	size_t		i;
 	t_cmd_cnt	count;
 
-	count.input_output_cnd = 0;
+	count.input_output_cnt = 0;
 	count.args_cnt = 0;
 	i = 0;
 	while (lexem[i] != '\0')
 	{
 		if (lexem[i] == '<' || lexem[i] == '>')
-			count.input_output_cnd++;
+			count.input_output_cnt++;
 		else
 			count.args_cnt++;
 		skip_and_check_next_token(lexem, &i);
@@ -84,6 +85,7 @@ t_cmd	*init_cmd(t_lexer *lexer)
 {
 	t_cmd	*cmd;
 
+	expend_wildcards(&lexer->current_token->lexem);
 	cmd = allocate_cmd(lexer->current_token->lexem);
 	if (cmd == NULL)
 		return (NULL);
@@ -105,7 +107,7 @@ t_ast_node	*create_node(t_lexer *lexer)
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
 	{
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 		return (NULL);
 	}
 	node->token = lexer->current_token;

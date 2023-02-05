@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/01 09:20:37 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/04 10:16:28 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ t_ast_node	*parser_job(t_lexer *lexer, char *envp[])
 
 	root = NULL;
 	g_state.stop_signal_flag = false;
-	g_state.pgrm_is_running = false;
-	g_state.wait_endline = false;
 	rl_done = 0;
 	if (init_lexer(lexer, envp) == false)
 		return (NULL);
@@ -27,11 +25,11 @@ t_ast_node	*parser_job(t_lexer *lexer, char *envp[])
 	add_history(lexer->input);
 	if (lexer->current_token_type != _EOF)
 	{
-		g_state.status = SYNTAX_ERROR;
+		g_state.error_state = SYNTAX_ERROR;
 		g_state.error_index = lexer->index;
 		g_state.error_index -= ft_strlen(lexer->current_token->lexem);
 	}
-	if (g_state.status == NORMAL)
-		g_state.pgrm_is_running = true;
+	if (g_state.error_state == NO_ERROR)
+		g_state.current_phase = EXECUTING_CMD;
 	return (root);
 }

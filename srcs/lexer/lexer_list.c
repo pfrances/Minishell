@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 18:08:56 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/27 11:38:28 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/04 09:47:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_lexer_node	*create_new_lexer_node(t_token_types type, char *content)
 	node = malloc(sizeof(t_lexer_node));
 	if (node == NULL)
 	{
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 		return (NULL);
 	}
 	node->token.lexem = content;
@@ -66,7 +66,7 @@ bool	add_node_to_list(t_lexer *lexer, size_t len)
 		token_content = ft_strndup(&lexer->input[lexer->index], len);
 		if (token_content == NULL)
 		{
-			g_state.status = ALLOCATION_FAILED;
+			g_state.error_state = ALLOCATION_FAILED;
 			return (false);
 		}
 	}
@@ -74,7 +74,7 @@ bool	add_node_to_list(t_lexer *lexer, size_t len)
 	if (new_node == NULL)
 	{
 		free(token_content);
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 		return (false);
 	}
 	lexer->list_head = add_back_lexer_list(lexer->list_head, new_node);

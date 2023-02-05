@@ -6,32 +6,28 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 11:58:27 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/03 17:15:19 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/04 10:20:34 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	readline_stop(void)
+{
+	if (g_state.stop_signal_flag == true)
+	{
+		rl_done = 1;
+		rl_replace_line("", 0);
+	}
+	return (0);
+}
+
 void	process_interrupt(int sig)
 {
 	(void)sig;
-	if (g_state.wait_endline == true)
-	{
-		g_state.stop_signal_flag = true;
-		rl_replace_line("", 0);
-		rl_done = 1;
+	g_state.stop_signal_flag = true;
+	if (g_state.current_phase == EXECUTING_CMD)
 		write(STDOUT_FILENO, "\n", 1);
-		// rl_on_new_line();
-		//rl_redisplay();
-	}
-	else if (g_state.pgrm_is_running == false)
-	{
-		g_state.stop_signal_flag = true;
-		rl_on_new_line();
-		write(STDOUT_FILENO, "\n", 1);
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
 }
 
 void	ignore_signal(int sig)
@@ -45,6 +41,7 @@ void	set_signal_handling(void)
 	struct sigaction	sig_end_process_handler;
 	struct sigaction	sig_ignoring_handler;
 
+	rl_event_hook = readline_stop;
 	sig_end_process_handler.sa_handler = process_interrupt;
 	sig_ignoring_handler.sa_handler = ignore_signal;
 	sigemptyset(&sig_end_process_handler.sa_mask);

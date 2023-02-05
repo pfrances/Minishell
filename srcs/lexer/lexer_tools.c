@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 19:07:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/03 17:05:26 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/05 16:22:29 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_token_types	get_token_type(t_lexer *lexer, size_t index)
 	return (_EOF);
 }
 
-char	*join_to_command_ending(char *s1, char *s2, char *join)
+char	*strjoin_with_sep(char *s1, char *s2, char *join)
 {
 	char	*result;
 	size_t	s1_len;
@@ -82,7 +82,7 @@ bool	update_last_command(t_lexer *lexer)
 		i++;
 	lexem_ending = ft_strndup(&lexer->input[lexer->index], i);
 	old_lexem = last_token->lexem;
-	last_token->lexem = join_to_command_ending(old_lexem, lexem_ending, "\n");
+	last_token->lexem = strjoin_with_sep(old_lexem, lexem_ending, "\n");
 	lexer->index += i;
 	free(lexem_ending);
 	if (last_token->lexem == NULL)
@@ -94,32 +94,27 @@ bool	get_command_line_ending(t_lexer *lexer)
 {
 	char	*input;
 
-	g_state.wait_endline = true;
+	g_state.current_phase = WAITING_CMD_LINE_END;
 	input = readline(PROMPT_INDENT);
-	ft_printf("0\n");
-	if (g_state.stop_signal_flag == true)
+	if (g_state.stop_signal_flag == true || input == NULL
+		|| ft_strncmp(input, "exit", 5) == 0)
 	{
-		ft_printf("1\n");
 		free(input);
-		g_state.status = CMD_STOP;
+		if (g_state.stop_signal_flag == true)
+			g_state.error_state = CMD_STOP;
+		else
+			g_state.error_state = PROGRAM_STOP;
 		return (false);
 	}
-	if (input == NULL || ft_strncmp(lexer->input, "exit", 5) == 0)
-	{
-		ft_printf("2\n");
-		free(input);
-		g_state.status = ALLOCATION_FAILED;
-		return (false);
-	}
-	lexer->input = join_to_command_ending(lexer->input, input, " ");
+	if (lexer->current_token_type == COMMAND)
+		lexer->input = strjoin_with_sep(lexer->input, input, "\n");
+	else
+		lexer->input = strjoin_with_sep(lexer->input, input, " ");
 	free(input);
 	if (lexer->input == NULL || update_last_command(lexer) == false)
 	{
-		ft_printf("3\n");
-		g_state.status = ALLOCATION_FAILED;
+		g_state.error_state = ALLOCATION_FAILED;
 		return (false);
 	}
-	g_state.wait_endline = false;
-	ft_printf("4\n");
 	return (true);
 }

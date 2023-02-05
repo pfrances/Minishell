@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/01 09:23:06 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/05 19:33:25 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <termios.h>
+# include <dirent.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -58,7 +59,7 @@ typedef struct s_input_output
 
 typedef struct s_command_cnt
 {
-	size_t	input_output_cnd;
+	size_t	input_output_cnt;
 	size_t	args_cnt;
 }	t_cmd_cnt;
 
@@ -128,23 +129,29 @@ typedef struct s_lexer
 /******************************************************************************/
 /**********************************state_struct*******************************/
 /******************************************************************************/
-typedef enum e_status_enum
+typedef enum e_error_state_enum
 {
-	NORMAL,
+	NO_ERROR,
 	ALLOCATION_FAILED,
 	SYNTAX_ERROR,
 	ENV_ERROR,
 	CMD_STOP,
 	PROGRAM_STOP
-}	t_status_enum;
+}	t_error_state_enum;
+
+typedef enum e_current_phase
+{
+	WAITING_CMD_LINE,
+	WAITING_CMD_LINE_END,
+	EXECUTING_CMD
+}	t_current_phase;
 
 typedef struct s_pgrm_state
 {
-	t_status_enum	status;
-	size_t			error_index;
-	bool			pgrm_is_running;
-	bool			stop_signal_flag;
-	bool			wait_endline;
+	t_error_state_enum	error_state;
+	size_t				error_index;
+	bool				stop_signal_flag;
+	t_current_phase		current_phase;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
 t_pgrm_state	g_state;
@@ -160,8 +167,6 @@ void			set_signal_handling(void);
 void			free_all(t_lexer *lexer, t_ast_node *ast_root);
 /*				ft_split_charset.c		*/
 char			**ft_split_charset(char *input, const char *charset);
-/*				read_from_stdin.c		*/
-char			*read_from_stdin(char *prompt_msg);
 /******************************************************************************/
 /**********************************srcs/lexer**********************************/
 /******************************************************************************/
@@ -174,10 +179,12 @@ t_lexer_node	*last_lexer_list(t_lexer_node *node);
 t_token_types	get_token_type(t_lexer *lexer, size_t index);
 void			update_bracket_count(t_lexer *lexer);
 bool			get_command_line_ending(t_lexer *lexer);
+char			*strjoin_with_sep(char *s1, char *s2, char *join);
 /*				get_next_token.c			*/
 bool			get_next_token(t_lexer *lexer);
 /*				redirection_check.c			*/
 bool			check_redirection(t_lexer *lexer, char *cmd, size_t len);
+size_t			skip_quote_content(char *str);
 /******************************************************************************/
 /*********************************srcs/parser**********************************/
 /******************************************************************************/
@@ -191,6 +198,12 @@ t_ast_node		*create_node(t_lexer *lexer);
 char			*get_cmd_path(char *name, char **env_paths);
 /*				set_input_output_args.c		*/
 void			set_input_output_args(t_cmd *cmd, char *lexem);
+/*				wildcards.c*/
+void			expend_wildcards(char **token);
+/*				wildcards_tools.c			*/
+char			*update_lexem(char *lexem, char *token,
+					char *patern, size_t start);
+char			*add_filename_to_result(char *result, struct dirent *entry);
 /******************************************************************************/
 /********************************srcs/commands*********************************/
 /******************************************************************************/
@@ -198,5 +211,7 @@ void			set_input_output_args(t_cmd *cmd, char *lexem);
 int				execute_command(t_cmd *cmd);
 /*				execute_ast.c			*/
 int				execute_ast(t_ast_node *node);
+/*				here_doc.c				*/
+void			set_here_doc(t_cmd *cmd, t_input_output *input_output);
 /******************************************************************************/
 #endif

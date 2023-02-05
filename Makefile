@@ -6,14 +6,14 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/31 12:59:26 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/05 19:32:04 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-INCLUDE = -I includes -I/usr/include/readline/
+INCLUDE = -I includes
 
 FT_PRINTF_DIR = ./ft_printf
 FT_PRINTF = $(FT_PRINTF_DIR)/ft_printf.a
@@ -25,8 +25,7 @@ OBJS_DIR = ./objs
 MAIN_SRCS = $(addprefix $(SRCS_DIR)/,			main.c						\
 												frees.c						\
 												signal_handling.c			\
-												ft_split_charset.c			\
-												read_from_stdin.c)
+												ft_split_charset.c)
 MAIN_OBJS = $(subst $(SRCS_DIR), $(OBJS_DIR), $(MAIN_SRCS:.c=.o))
 SRCS = $(MAIN_SRCS) $(LEXER_SRCS) $(PARSER_SRCS) $(COMMANDS_SRCS)
 OBJS = $(MAIN_OBJS) $(LEXER_OBJS) $(PARSER_OBJS) $(COMMANDS_OBJS)
@@ -48,28 +47,33 @@ PARSER_SRCS = $(addprefix $(PARSER_SRCS_DIR)/,	create_node.c				\
 												get_command_path.c			\
 												parse_nodes.c				\
 												parser.c					\
-												set_input_output_args.c)
+												set_input_output_args.c		\
+												wildcards.c					\
+												wildcards_tools.c)
 PARSER_OBJS = $(subst $(PARSER_SRCS_DIR), $(PARSER_OBJS_DIR), $(PARSER_SRCS:.c=.o))
 ###############################################################################
 #################################COMMANDS######################################
 COMMANDS_SRCS_DIR = $(SRCS_DIR)/commands
 COMMANDS_OBJS_DIR = $(OBJS_DIR)/commands
 COMMANDS_SRCS = $(addprefix $(COMMANDS_SRCS_DIR)/,	command_execute.c	\
-													execute_ast.c)
+													execute_ast.c		\
+													here_doc.c)
 COMMANDS_OBJS = $(subst $(COMMANDS_SRCS_DIR), $(COMMANDS_OBJS_DIR), $(COMMANDS_SRCS:.c=.o))
 ###############################################################################
 OS = $(shell uname -s)
 
 ifeq ($(OS),Linux)
 READLINE = -L/usr/lib/x86_64-linux-gnu -lreadline
+INCLUDE += -I/usr/include/readline/
 else
 READLINE = -L$(shell brew --prefix readline)/lib -lreadline
+INCLUDE += -I$(shell brew --prefix readline)/include
 endif
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(FT_PRINTF)
-	$(CC) $(CFLAGS) $(OBJS) $(READLINE) $(INCLUDE) $(LIBFT) $(FT_PRINTF) -o $(NAME)
+	$(CC) $(CFLAGS) $(INCLUDE) $(READLINE) $(OBJS) $(LIBFT) $(FT_PRINTF) -o $(NAME)
 
 $(LEXER_OBJS_DIR)/%.o: $(LEXER_SRCS_DIR)/%.c
 	@mkdir -p $(LEXER_OBJS_DIR)
@@ -105,4 +109,8 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+install:
+	curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh
+	brew update && brew upgrade && brew install readline
+
+.PHONY: all clean fclean re install
