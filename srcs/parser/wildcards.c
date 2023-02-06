@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 19:36:52 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/06 19:54:09 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ char	*get_wildcards_token(char *lexem, size_t *start)
 		i += skip_quote_content(&lexem[i]);
 		if (lexem[i] == '*')
 		{
-			j = i + 1;
+			j = i;
 			while (i > 0 && ft_isspace(lexem[i - 1]) == false
 				&& lexem[i - 1] != '"' && lexem[i - 1] != '\'')
 				i--;
-			while (lexem[j] != '\0' && ft_isspace(lexem[j + 1]) == false
+			while (lexem[j + 1] != '\0' && ft_isspace(lexem[j + 1]) == false
 				&& lexem[j + 1] != '"' && lexem[j + 1] != '\'')
 				j++;
 			*start = i;
@@ -65,6 +65,8 @@ bool	match(char *token, char *filename)
 		else
 			return (false);
 	}
+	while (token[i] == '*')
+		i++;
 	return (token[i] == filename[j]);
 }
 
@@ -101,8 +103,8 @@ void	expend_wildcards(char **lexem)
 {
 	char	*token;
 	char	*patern;
-	char	*result;
 	size_t	start;
+	size_t	i;
 
 	token = get_wildcards_token(*lexem, &start);
 	while (token != NULL)
@@ -113,11 +115,11 @@ void	expend_wildcards(char **lexem)
 			g_state.error_state = ALLOCATION_FAILED;
 			return ;
 		}
-		result = update_lexem(*lexem, token, patern, start);
+		if (*patern != '\0')
+			*lexem = update_lexem(*lexem, token, patern, start);
+		i = start + ft_strlen(token);
 		free(token);
 		free(patern);
-		free(*lexem);
-		*lexem = result;
-		token = get_wildcards_token(*lexem, &start);
+		token = get_wildcards_token(*lexem + i - 1, &start);
 	}
 }

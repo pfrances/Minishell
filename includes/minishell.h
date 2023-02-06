@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 19:33:25 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/06 21:22:24 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,8 @@ bool			get_next_token(t_lexer *lexer);
 /*				redirection_check.c			*/
 bool			check_redirection(t_lexer *lexer, char *cmd, size_t len);
 size_t			skip_quote_content(char *str);
+/*				expand_env_var.c			*/
+char			*expand_env_var(char *lexem);
 /******************************************************************************/
 /*********************************srcs/parser**********************************/
 /******************************************************************************/

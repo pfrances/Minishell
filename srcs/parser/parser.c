@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/04 10:16:28 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/06 21:20:54 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_ast_node	*parser_job(t_lexer *lexer, char *envp[])
 		return (NULL);
 	root = parse_semi_colon(root, lexer);
 	add_history(lexer->input);
-	if (lexer->current_token_type != _EOF)
+	if (g_state.error_state == NO_ERROR && lexer->current_token_type != _EOF)
 	{
 		g_state.error_state = SYNTAX_ERROR;
 		g_state.error_index = lexer->index;

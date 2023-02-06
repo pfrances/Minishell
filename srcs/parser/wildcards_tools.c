@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 19:29:11 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 19:33:15 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/06 22:09:29 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,22 @@ char	*update_lexem(char *lexem, char *token, char *patern, size_t start)
 
 	lexem_len = ft_strlen(lexem);
 	token_len = ft_strlen(token);
-	patern_len = ft_strlen(patern);
+	if (patern != NULL)
+		patern_len = ft_strlen(patern);
+	else
+		patern_len = 0;
 	result = malloc(sizeof(char) * (lexem_len - token_len + patern_len + 1));
 	if (result == NULL)
 	{
 		g_state.error_state = ALLOCATION_FAILED;
-		free(patern);
+		free(lexem);
 		return (NULL);
 	}
 	ft_strlcpy(result, lexem, start + 1);
-	ft_strlcat(result, patern, ft_strlen(result) + patern_len + 1);
+	if (patern != NULL)
+		ft_strlcat(result, patern, ft_strlen(result) + patern_len + 1);
 	ft_strlcat(result, lexem + start + token_len,
 		lexem_len + patern_len - token_len + 1);
+	free(lexem);
 	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 19:10:22 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/06 21:27:40 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,20 @@ t_cmd	*init_cmd(t_lexer *lexer)
 {
 	t_cmd	*cmd;
 
+	lexer->current_token->lexem = expand_env_var(lexer->current_token->lexem);
+	if (g_state.error_state != NO_ERROR)
+		return (NULL);
 	expend_wildcards(&lexer->current_token->lexem);
+	if (g_state.error_state != NO_ERROR)
+		return (NULL);
 	cmd = allocate_cmd(lexer->current_token->lexem);
 	if (cmd == NULL)
 		return (NULL);
 	cmd->all_path = lexer->all_path;
 	cmd->envp = lexer->envp;
 	set_input_output_args(cmd, lexer->current_token->lexem);
+	if (g_state.error_state != NO_ERROR)
+		return (NULL);
 	cmd->path = get_cmd_path(cmd->args[0], cmd->all_path);
 	cmd->input_fd = STDIN_FILENO;
 	cmd->input_fd_save = -1;
