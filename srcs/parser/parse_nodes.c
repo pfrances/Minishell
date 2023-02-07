@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 16:11:49 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 14:49:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 12:01:53 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	if (g_state.error_state == NO_ERROR && lexer->current_token_type == COMMAND)
 	{
 		new_node = create_node(lexer);
-		if (g_state.error_state == NO_ERROR && get_next_token(lexer))
+		if (g_state.error_state != NO_ERROR)
+			return (NULL);
+		if (get_next_token(lexer))
 			return (new_node);
 	}
 	g_state.error_state = SYNTAX_ERROR;

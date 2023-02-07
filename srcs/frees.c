@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:44:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/01/31 19:44:39 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:34:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,13 @@ void	free_lexer_list(t_lexer_node *list)
 void	free_all(t_lexer *lexer, t_ast_node *ast_root)
 {
 	free_syntax_tree(ast_root);
-	free_array((void **)lexer->tkn_types_array);
-	free_array((void **)lexer->all_path);
+	if (g_state.error_state >= ALLOCATION_FAILED)
+	{
+		free_array((void **)lexer->tkn_types_array);
+		free_array((void **)lexer->all_path);
+		free(g_state.last_pgrm_exit_status_str);
+		free(g_state.main_pid_str);
+	}
 	free_lexer_list(lexer->list_head);
 	free(lexer->input);
 }

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/06 19:54:09 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 15:22:49 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,22 @@ char	*get_wildcards_token(char *lexem, size_t *start)
 	return (NULL);
 }
 
+size_t	skip_wildcard_content(char *token, char *filename)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (token[i] != '\0' && token[i] != '*')
+		i++;
+	j = 0;
+	if (token[i] == '\0')
+		i++;
+	while (filename[j] != '\0' && ft_strncmp(&filename[j], token, i) != 0)
+		j++;
+	return (j);
+}
+
 bool	match(char *token, char *filename)
 {
 	size_t	i;
@@ -46,7 +62,7 @@ bool	match(char *token, char *filename)
 
 	i = 0;
 	j = 0;
-	while (token[i] != '\0' && filename[j] != '\0')
+	while (token[i] != '\0' && (filename[j] != '\0' || token[i] == '*'))
 	{
 		if (token[i] == '*')
 		{
@@ -54,8 +70,7 @@ bool	match(char *token, char *filename)
 				i++;
 			if (token[i] == '\0')
 				return (true);
-			while (filename[j] != '\0' && filename[j] != token[i])
-				j++;
+			j += skip_wildcard_content(&token[i], &filename[j]);
 		}
 		else if (token[i] == filename[j])
 		{
@@ -65,8 +80,6 @@ bool	match(char *token, char *filename)
 		else
 			return (false);
 	}
-	while (token[i] == '*')
-		i++;
 	return (token[i] == filename[j]);
 }
 
@@ -117,7 +130,7 @@ void	expend_wildcards(char **lexem)
 		}
 		if (*patern != '\0')
 			*lexem = update_lexem(*lexem, token, patern, start);
-		i = start + ft_strlen(token);
+		i = start + ft_strlen(patern);
 		free(token);
 		free(patern);
 		token = get_wildcards_token(*lexem + i - 1, &start);

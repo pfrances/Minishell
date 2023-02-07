@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:13:39 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 13:58:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:29:06 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,62 +25,63 @@ void	execute_left_pipe(t_ast_node *node, int fd[])
 	exit(0);
 }
 
-int	execute_right_pipe(t_ast_node *node, int pid, int fd[])
+void	execute_right_pipe(t_ast_node *node, int fd[])
 {
-	int	status;
 	int	input_save;
 
-	waitpid(pid, &status, 0);
+	wait(NULL);
 	close(fd[1]);
 	input_save = dup(STDIN_FILENO);
 	dup2(fd[0], STDIN_FILENO);
-	status = execute_ast(node->right);
+	execute_ast(node->right);
 	close(fd[0]);
 	dup2(input_save, STDIN_FILENO);
-	return (status);
 }
 
-int	execute_pipe(t_ast_node *node)
+void	execute_pipe(t_ast_node *node)
 {
 	int		fd[2];
-	int		status;
 	pid_t	pid;
 
+	if (g_state.error_state != NO_ERROR)
+		return ;
 	if (pipe(fd) == -1)
-		return (-1);
+	{
+		g_state.error_state = PIPE_FAILED;
+		return ;
+	}
 	pid = fork();
 	if (pid == 0)
 		execute_left_pipe(node, fd);
+	else if (pid > 0)
+		execute_right_pipe(node, fd);
 	else
-		status = execute_right_pipe(node, pid, fd);
-	return (status);
+		g_state.error_state = FORK_FAILED;
 }
 
-int	execute_ast(t_ast_node *node)
+void	execute_ast(t_ast_node *node)
 {
-	int	status;
-
-	status = 0;
+	if (g_state.error_state != NO_ERROR)
+		return ;
 	if (node->token->type == COMMAND)
-		status = execute_command(node->cmd);
+		execute_command(node->cmd);
 	else if (node->token->type == PIPE)
-		status = execute_pipe(node);
+		execute_pipe(node);
 	else if (node->token->type == SEMICOLON)
 	{
-		status = execute_ast(node->left);
-		status = execute_ast(node->right);
+		execute_ast(node->left);
+		execute_ast(node->right);
 	}
 	else if (node->token->type == OR)
 	{
-		status = execute_ast(node->left);
-		if (status != 0)
-			status = execute_ast(node->right);
+		execute_ast(node->left);
+		if (g_state.last_pgrm_exit_status != 0)
+			execute_ast(node->right);
 	}
 	else if (node->token->type == AND)
 	{
-		status = execute_ast(node->left);
-		if (status == 0)
-			status = execute_ast(node->right);
+		execute_ast(node->left);
+		if (g_state.last_pgrm_exit_status == 0)
+			execute_ast(node->right);
 	}
-	return (status);
 }

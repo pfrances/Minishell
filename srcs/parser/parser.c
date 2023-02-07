@@ -6,20 +6,22 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/06 21:20:54 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 13:02:45 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*parser_job(t_lexer *lexer, char *envp[])
+t_ast_node	*parser_job(t_lexer *lexer)
 {
 	t_ast_node	*root;
 
 	root = NULL;
 	g_state.stop_signal_flag = false;
+	g_state.error_state = NO_ERROR;
+	g_state.error_index = 0;
 	rl_done = 0;
-	if (init_lexer(lexer, envp) == false)
+	if (init_lexer(lexer) == false)
 		return (NULL);
 	root = parse_semi_colon(root, lexer);
 	add_history(lexer->input);

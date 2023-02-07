@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/06 21:22:24 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:34:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,11 +132,14 @@ typedef struct s_lexer
 typedef enum e_error_state_enum
 {
 	NO_ERROR,
-	ALLOCATION_FAILED,
 	SYNTAX_ERROR,
-	ENV_ERROR,
 	CMD_STOP,
-	PROGRAM_STOP
+	ALLOCATION_FAILED,
+	PIPE_FAILED,
+	FORK_FAILED,
+	ENV_ERROR,
+	PROGRAM_STOP,
+	EXIT
 }	t_error_state_enum;
 
 typedef enum e_current_phase
@@ -152,6 +155,9 @@ typedef struct s_pgrm_state
 	size_t				error_index;
 	bool				stop_signal_flag;
 	t_current_phase		current_phase;
+	char				*main_pid_str;
+	int					last_pgrm_exit_status;
+	char				*last_pgrm_exit_status_str;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
 t_pgrm_state	g_state;
@@ -161,17 +167,19 @@ t_pgrm_state	g_state;
 /******************************************************************************/
 /*				main.c					*/
 void			print_error_msg(t_lexer *lexer);
+void			actualise_exit_status(int status);
 /*				signal_handling.c		*/
 void			set_signal_handling(void);
 /*				frees.c*/
 void			free_all(t_lexer *lexer, t_ast_node *ast_root);
+void			free_array(void **array);
 /*				ft_split_charset.c		*/
 char			**ft_split_charset(char *input, const char *charset);
 /******************************************************************************/
 /**********************************srcs/lexer**********************************/
 /******************************************************************************/
 /*				lexer.c					*/
-bool			init_lexer(t_lexer *lexer, char *emvp[]);
+bool			init_lexer(t_lexer *lexer);
 /*				lexer_list.c			*/
 bool			add_node_to_list(t_lexer *lexer, size_t len);
 t_lexer_node	*last_lexer_list(t_lexer_node *node);
@@ -191,7 +199,7 @@ char			*expand_env_var(char *lexem);
 /*********************************srcs/parser**********************************/
 /******************************************************************************/
 /*				parser.c					*/
-t_ast_node		*parser_job(t_lexer *lexer, char *envp[]);
+t_ast_node		*parser_job(t_lexer *lexer);
 /*				parse_nodes.c				*/
 t_ast_node		*parse_semi_colon(t_ast_node *root, t_lexer *lexer);
 /*				create_nodes.c				*/
@@ -210,9 +218,9 @@ char			*add_filename_to_result(char *result, struct dirent *entry);
 /********************************srcs/commands*********************************/
 /******************************************************************************/
 /*				command_execute.c		*/
-int				execute_command(t_cmd *cmd);
+void			execute_command(t_cmd *cmd);
 /*				execute_ast.c			*/
-int				execute_ast(t_ast_node *node);
+void			execute_ast(t_ast_node *node);
 /*				here_doc.c				*/
 void			set_here_doc(t_cmd *cmd, t_input_output *input_output);
 /******************************************************************************/

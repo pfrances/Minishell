@@ -6,13 +6,13 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/06 21:22:42 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/07 17:13:37 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
 INCLUDE = -I includes
 
 FT_PRINTF_DIR = ./ft_printf
@@ -74,7 +74,7 @@ endif
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(FT_PRINTF)
-	$(CC) $(CFLAGS) $(INCLUDE) $(READLINE) $(OBJS) $(LIBFT) $(FT_PRINTF) -o $(NAME)
+	$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) $(READLINE) $(LIBFT) $(FT_PRINTF) -o $(NAME)
 
 $(LEXER_OBJS_DIR)/%.o: $(LEXER_SRCS_DIR)/%.c
 	@mkdir -p $(LEXER_OBJS_DIR)
@@ -86,7 +86,7 @@ $(PARSER_OBJS_DIR)/%.o: $(PARSER_SRCS_DIR)/%.c
 
 $(COMMANDS_OBJS_DIR)/%.o: $(COMMANDS_SRCS_DIR)/%.c
 	@mkdir -p $(COMMANDS_OBJS_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c  $< -o $@
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@mkdir -p $(OBJS_DIR)

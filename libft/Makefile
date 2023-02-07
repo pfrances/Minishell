@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/05 08:33:13 by pfrances          #+#    #+#              #
-#    Updated: 2023/01/16 13:16:29 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/07 14:08:07 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ SRCS =	$(addprefix $(SRCS_DIR)/,	ft_isalpha.c		\
 									ft_memchr.c			\
 									ft_memcmp.c			\
 									ft_strnstr.c		\
+									ft_strstr.c			\
 									ft_atoi.c			\
 									ft_calloc.c			\
 									ft_strdup.c			\

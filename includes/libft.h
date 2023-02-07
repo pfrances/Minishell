@@ -64,6 +64,8 @@ int		ft_memcmp(const void *s1, const void *s2, size_t n);
 
 char	*ft_strnstr(const char *s1, const char *s2, size_t n);
 
+char	*ft_strstr(const char *s1, const char *s2);
+
 int		ft_atoi(const char *nptr);
 
 void	*ft_calloc(size_t nmemb, size_t size);

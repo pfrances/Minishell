@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 13:44:20 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 16:27:23 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,14 @@ void	reset_redirection(t_cmd *cmd)
 	}
 }
 
-int	execute_command(t_cmd *cmd)
+void	execute_command(t_cmd *cmd)
 {
 	pid_t	pid;
 	int		status;
 
-	status = 0;
 	set_up_input_output(cmd);
 	if (g_state.error_state != NO_ERROR)
-		return (1);
+		return ;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -101,10 +100,12 @@ int	execute_command(t_cmd *cmd)
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-		reset_redirection(cmd);
-		return (WEXITSTATUS(status));
+		actualise_exit_status(WEXITSTATUS(status));
 	}
-	perror("fork failed");
+	else
+	{
+		perror("fork failed");
+		g_state.error_state = FORK_FAILED;
+	}
 	reset_redirection(cmd);
-	return (WIFEXITED(status));
 }

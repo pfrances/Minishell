@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:18:01 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/04 10:03:50 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 13:02:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,14 @@ bool	read_first_line(t_lexer *lexer)
 	}
 }
 
-bool	init_lexer(t_lexer *lexer, char *envp[])
+bool	init_lexer(t_lexer *lexer)
 {
 	lexer->list_head = NULL;
-	lexer->all_path = NULL;
 	lexer->input = NULL;
-	lexer->tkn_types_array = ft_split_charset(TOKENS_CHARSET, SPACES_CHARSET);
-	if (lexer->tkn_types_array == NULL)
-		return (false);
 	if (read_first_line(lexer) == false)
 		return (false);
 	lexer->bracket_count = 0;
-	g_state.error_state = NO_ERROR;
-	g_state.error_index = 0;
 	lexer->current_node = NULL;
-	lexer->envp = envp;
-	lexer->all_path = ft_split(getenv("PATH"), ':');
-	if (!lexer->envp || !lexer->all_path)
-	{
-		g_state.error_state = ALLOCATION_FAILED;
-		return (false);
-	}
 	if (get_next_token(lexer) == false)
 	{
 		add_history(lexer->input);
