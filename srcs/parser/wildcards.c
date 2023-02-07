@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 15:22:49 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 17:48:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,14 @@ void	expend_wildcards(char **lexem)
 			return ;
 		}
 		if (*patern != '\0')
+		{
 			*lexem = update_lexem(*lexem, token, patern, start);
-		i = start + ft_strlen(patern);
+			i = start + ft_strlen(patern);
+		}
+		else
+			i = start + ft_strlen(token);
 		free(token);
 		free(patern);
-		token = get_wildcards_token(*lexem + i - 1, &start);
+		token = get_wildcards_token(*lexem + i, &start);
 	}
 }
