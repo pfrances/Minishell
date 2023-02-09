@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   get_env_path_array.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/08 10:53:00 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/08 11:11:37 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+char	**get_env_path_array(void)
 {
-	t_ast_node	*node;
+	char	**path_array;
+	char	*all_path_in_one_line;
 
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
+	all_path_in_one_line = get_env_value("PATH");
+	if (all_path_in_one_line == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		if (g_state.error_state == NO_ERROR)
+			g_state.error_state = ENV_ERROR;
 		return (NULL);
 	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	path_array = ft_split(all_path_in_one_line, ':');
+	if (path_array == NULL)
+		g_state.error_state = ALLOCATION_FAILED;
+	free(all_path_in_one_line);
+	return (path_array);
 }

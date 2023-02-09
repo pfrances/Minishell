@@ -1,30 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   update_bracket_count.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2022/12/29 19:07:00 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/08 17:25:52 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+void	update_bracket_count(t_lexer *lexer)
 {
-	t_ast_node	*node;
-
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
-	{
-		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
-	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	if (lexer->current_token_type == OPEN_BRACKET)
+		lexer->bracket_count++;
+	else if (lexer->current_token_type == CLOSE_BRACKET)
+		lexer->bracket_count--;
 }

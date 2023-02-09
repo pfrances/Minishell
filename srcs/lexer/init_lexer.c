@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:18:01 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 13:02:20 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 20:22:21 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	read_first_line(t_lexer *lexer)
 	while (1)
 	{
 		lexer->index = 0;
-		if (lexer->input == NULL || ft_strncmp(lexer->input, "exit", 5) == 0)
+		if (lexer->input == NULL)
 		{
 			g_state.error_state = PROGRAM_STOP;
 			return (false);

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 11:56:04 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 17:22:38 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 20:16:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ char	*get_cmd_token(char *str, size_t *lexem_index)
 	return (cmd_token);
 }
 
-t_input_output	*set_input(char *lexem, size_t *i)
+t_redirect	*set_input(char *lexem, size_t *i)
 {
-	t_input_output	*input;
+	t_redirect	*input;
 
-	input = malloc(sizeof(t_input_output));
+	input = malloc(sizeof(t_redirect));
 	if (input == NULL)
 	{
 		g_state.error_state = ALLOCATION_FAILED;
@@ -87,11 +87,11 @@ t_input_output	*set_input(char *lexem, size_t *i)
 	return (input);
 }
 
-t_input_output	*set_output(char *lexem, size_t *i)
+t_redirect	*set_output(char *lexem, size_t *i)
 {
-	t_input_output	*output;
+	t_redirect	*output;
 
-	output = malloc(sizeof(t_input_output));
+	output = malloc(sizeof(t_redirect));
 	if (output == NULL)
 	{
 		g_state.error_state = ALLOCATION_FAILED;
@@ -124,12 +124,12 @@ void	set_input_output_args(t_cmd *cmd, char *lexem)
 		if (lexem[i] == '\0')
 			break ;
 		if (lexem[i] == '<')
-			cmd->input_output[input_output_cnt++] = set_input(lexem, &i);
+			cmd->redirect[input_output_cnt++] = set_input(lexem, &i);
 		else if (lexem[i] == '>')
-			cmd->input_output[input_output_cnt++] = set_output(lexem, &i);
+			cmd->redirect[input_output_cnt++] = set_output(lexem, &i);
 		else
 			cmd->args[args_cnt++] = get_cmd_token(&lexem[i], &i);
 	}
-	cmd->input_output[input_output_cnt] = NULL;
+	cmd->redirect[input_output_cnt] = NULL;
 	cmd->args[args_cnt] = NULL;
 }

@@ -1,32 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wildcards_tools.c                                  :+:      :+:    :+:   */
+/*   update_cmd_lexem.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/05 19:29:11 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 10:54:27 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/09 15:58:09 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/09 16:14:59 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*add_filename_to_result(char *result, struct dirent *entry)
-{
-	if (*result == '\0')
-		result = strjoin_with_sep(result, entry->d_name, "");
-	else
-		result = strjoin_with_sep(result, entry->d_name, " ");
-	if (result == NULL)
-	{
-		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
-	}
-	return (result);
-}
-
-char	*update_lexem(char *lexem, char *token, char *patern, size_t start)
+char	*update_cmd_lexem(char *lexem, char *token, char *patern, size_t start)
 {
 	char	*result;
 	size_t	lexem_len;

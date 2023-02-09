@@ -1,30 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   get_current_pid.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/09 20:52:12 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/09 21:29:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+char	*get_current_pid_str(void)
 {
-	t_ast_node	*node;
+	pid_t	pid;
+	char	*pid_str;
 
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
+	pid = fork();
+	if (pid == 0)
+		exit(0);
+	else if (pid > 0)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
+		waitpid(pid, NULL, 0);
+		pid_str = ft_itoa(pid);
+		if (pid_str == NULL)
+			g_state.error_state = ALLOCATION_FAILED;
+		return (pid_str);
 	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	perror("fork failed");
+	g_state.error_state = FORK_FAILED;
+	return (NULL);
 }

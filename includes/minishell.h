@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 16:34:03 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/09 22:12:30 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,32 @@
 /******************************************************************************/
 /**********************************cmd_struct**********************************/
 /******************************************************************************/
-typedef enum e_input_output_enum
+typedef enum e_builtin_type
+{
+	NOT_BUILTIN,
+	_ECHO,
+	CD,
+	PWD,
+	EXPORT,
+	UNSET,
+	ENV,
+	EXIT
+}	t_builtin_type;
+
+typedef enum e_redirect_enum
 {
 	FILE_INPUT,
 	FILE_OUTPUT,
 	STD_INPUT,
 	FILE_ADD_OUTPUT
-}	t_input_output_enum;
+}	t_redirect_enum;
 
-typedef struct s_input_output
+typedef struct s_redirect
 {
-	t_input_output_enum	type;
-	char				*filename;
-	int					fd;
-}	t_input_output;
+	t_redirect_enum	type;
+	char			*filename;
+	int				fd;
+}	t_redirect;
 
 typedef struct s_command_cnt
 {
@@ -65,15 +77,15 @@ typedef struct s_command_cnt
 
 typedef struct s_cmd
 {
-	char				*path;
-	char				**args;
-	t_input_output		**input_output;
-	int					input_fd;
-	int					input_fd_save;
-	int					output_fd;
-	int					output_fd_save;
-	char				**all_path;
-	char				**envp;
+	char			*path;
+	t_builtin_type	builtin_type;
+	char			**args;
+	t_redirect		**redirect;
+	int				input_fd;
+	int				input_fd_save;
+	int				output_fd;
+	int				output_fd_save;
+	char			**all_path;
 }	t_cmd;
 /******************************************************************************/
 /**********************************ast_struct**********************************/
@@ -123,11 +135,9 @@ typedef struct s_lexer
 	t_token			*current_token;
 	t_lexer_node	*current_node;
 	char			**tkn_types_array;
-	char			**envp;
-	char			**all_path;
 }	t_lexer;
 /******************************************************************************/
-/**********************************state_struct*******************************/
+/**********************************state_struct********************************/
 /******************************************************************************/
 typedef enum e_error_state_enum
 {
@@ -139,7 +149,7 @@ typedef enum e_error_state_enum
 	FORK_FAILED,
 	ENV_ERROR,
 	PROGRAM_STOP,
-	EXIT
+	EXIT_CALL
 }	t_error_state_enum;
 
 typedef enum e_current_phase
@@ -155,73 +165,142 @@ typedef struct s_pgrm_state
 	size_t				error_index;
 	bool				stop_signal_flag;
 	t_current_phase		current_phase;
-	char				*main_pid_str;
-	int					last_pgrm_exit_status;
-	char				*last_pgrm_exit_status_str;
+	int					exit_status;
+	char				*exit_status_str;
+	char				**envp;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
 t_pgrm_state	g_state;
 
 /******************************************************************************/
-/*************************************srcs*************************************/
+/********************************srcs/builtins*********************************/
 /******************************************************************************/
-/*				main.c					*/
-void			print_error_msg(t_lexer *lexer);
-void			actualise_exit_status(int status);
-/*				signal_handling.c		*/
-void			set_signal_handling(void);
-/*				frees.c*/
-void			free_all(t_lexer *lexer, t_ast_node *ast_root);
-void			free_array(void **array);
-/*				ft_split_charset.c		*/
-char			**ft_split_charset(char *input, const char *charset);
-/******************************************************************************/
-/**********************************srcs/lexer**********************************/
-/******************************************************************************/
-/*				lexer.c					*/
-bool			init_lexer(t_lexer *lexer);
-/*				lexer_list.c			*/
-bool			add_node_to_list(t_lexer *lexer, size_t len);
-t_lexer_node	*last_lexer_list(t_lexer_node *node);
-/*				lexer_tools.c			*/
-t_token_types	get_token_type(t_lexer *lexer, size_t index);
-void			update_bracket_count(t_lexer *lexer);
-bool			get_command_line_ending(t_lexer *lexer);
-char			*strjoin_with_sep(char *s1, char *s2, char *join);
-/*				get_next_token.c			*/
-bool			get_next_token(t_lexer *lexer);
-/*				redirection_check.c			*/
-bool			check_redirection(t_lexer *lexer, char *cmd, size_t len);
-size_t			skip_quote_content(char *str);
-/*				expand_env_var.c			*/
-char			*expand_env_var(char *lexem);
-/******************************************************************************/
-/*********************************srcs/parser**********************************/
-/******************************************************************************/
-/*				parser.c					*/
-t_ast_node		*parser_job(t_lexer *lexer);
-/*				parse_nodes.c				*/
-t_ast_node		*parse_semi_colon(t_ast_node *root, t_lexer *lexer);
-/*				create_nodes.c				*/
-t_ast_node		*create_node(t_lexer *lexer);
-/*				get_command_path.c			*/
-char			*get_cmd_path(char *name, char **env_paths);
-/*				set_input_output_args.c		*/
-void			set_input_output_args(t_cmd *cmd, char *lexem);
-/*				wildcards.c*/
-void			expend_wildcards(char **token);
-/*				wildcards_tools.c			*/
-char			*update_lexem(char *lexem, char *token,
-					char *patern, size_t start);
-char			*add_filename_to_result(char *result, struct dirent *entry);
+/*				check_builtin_type.c				*/
+t_builtin_type	check_builtin_type(char **cmd_args);
+/*				execute_builtin.c					*/
+void			execute_builtin(t_cmd *cmd);
+/*				builtin_echo.c						*/
+void			builtin_echo(t_cmd *cmd);
+/*				builtin_cd.c						*/
+void			builtin_cd(t_cmd *cmd);
+/*				builtin_pwd.c						*/
+void			builtin_pwd(t_cmd *cmd);
+/*				builtin_export.c					*/
+void			builtin_export(t_cmd *cmd);
+/*				builtin_unset.c						*/
+void			builtin_unset(t_cmd *cmd);
+/*				builtin_env.c						*/
+void			builtin_env(t_cmd *cmd);
+/*				builtin_exit.c						*/
+void			builtin_exit(t_cmd *cmd);
 /******************************************************************************/
 /********************************srcs/commands*********************************/
 /******************************************************************************/
-/*				command_execute.c		*/
-void			execute_command(t_cmd *cmd);
 /*				execute_ast.c			*/
 void			execute_ast(t_ast_node *node);
+/*				execute_command.c		*/
+void			execute_command(t_ast_node *cmd_node);
+/*				execute_pipe.c			*/
+void			execute_pipe(t_ast_node *node);
 /*				here_doc.c				*/
-void			set_here_doc(t_cmd *cmd, t_input_output *input_output);
+void			set_here_doc(t_cmd *cmd, t_redirect *redirect);
+/*				open_files.c			*/
+void			open_output_files(t_cmd *cmd, t_redirect *redirect);
+void			open_input_files(t_cmd *cmd, t_redirect *redirect);
+/*				set_unset_redir.c		*/
+void			set_redirections(t_cmd *cmd);
+void			reset_redirections(t_cmd *cmd);
+/*---------------------------srs/commands/init_cmd----------------------------*/
+/*				expand_env_var.c			*/
+char			*expand_env_var(char *lexem);
+/*				get_command_path.c			*/
+char			*get_cmd_path(char *name, char **env_paths);
+/*				init_cmd.c					*/
+t_cmd			*init_cmd(t_token *token);
+/*				set_input_output_args.c		*/
+void			set_input_output_args(t_cmd *cmd, char *lexem);
+/*				update_cmd_lexem.c			*/
+char			*update_cmd_lexem(char *lexem, char *token,
+					char *patern, size_t start);
+/*				wildcards.c					*/
+void			expend_wildcards(char **token);
+/*				wildcards_match.c			*/
+bool			wildcards_match(char *token, char *filename);
 /******************************************************************************/
+/********************************srcs/environment******************************/
+/******************************************************************************/
+/*				add_env_entry.c			*/
+void			add_entry_to_env(char *entry);
+/*				cmp_var_names.c			*/
+bool			cmp_var_names(char *entry, char *var_name);
+/*				get_env_path_array.c	*/
+char			**get_env_path_array(void);
+/*				get_env_value.c			*/
+char			*get_env_value(char *to_find);
+/*				is_var_in_env.c			*/
+bool			is_var_in_env(char *var_name);
+/*				remove_env_entry.c		*/
+void			remove_env_entry(char *var_name);
+/*				split_env_var.c			*/
+bool			split_env_var(char *var, char **var_name, char **var_value);
+/*				update_env_entry.c		*/
+void			update_env_entry(char *entry, char *var_name);
+/******************************************************************************/
+/**********************************srcs/lexer**********************************/
+/******************************************************************************/
+/*				get_cmd_line_ending.c		*/
+bool			get_cmd_line_ending(t_lexer *lexer);
+/*				get_next_token.c			*/
+bool			get_next_token(t_lexer *lexer);
+/*				get_token_type.c			*/
+t_token_types	get_token_type(t_lexer *lexer, size_t index);
+/*				init_lexer.c						*/
+bool			init_lexer(t_lexer *lexer);
+/*				lexer_list.c				*/
+bool			add_node_to_list(t_lexer *lexer, size_t len);
+t_lexer_node	*last_lexer_list(t_lexer_node *node);
+/*				redirection_check.c			*/
+bool			check_redirection(t_lexer *lexer, char *cmd, size_t len);
+/*				update_bracket_count.c		*/
+void			update_bracket_count(t_lexer *lexer);
+/******************************************************************************/
+/*********************************srcs/parser**********************************/
+/******************************************************************************/
+/*				create_nodes.c				*/
+t_ast_node		*create_node(t_lexer *lexer);
+/*				parse_nodes.c				*/
+t_ast_node		*parse_semi_colon(t_ast_node *root, t_lexer *lexer);
+/*				parser.c					*/
+t_ast_node		*parser_job(t_lexer *lexer);
+/******************************************************************************/
+/*********************************srcs/tools***********************************/
+/******************************************************************************/
+/*				actualise_exit_status.c				*/
+void			actualise_exit_status(int status);
+/*				array_tools.c						*/
+void			free_array(void **array);
+char			**resize_array(char **array, int difference);
+char			**dup_array(char **array);
+size_t			array_len(void **array);
+/*				get_current_pid_str.c					*/
+char			*get_current_pid_str(void);
+/*				ft_split_charset.c					*/
+char			**ft_split_charset(char *input, const char *charset);
+/*				skip_quote_content.c				*/
+size_t			skip_quote_content(char *str);
+/*				str_tools.c							*/
+char			*strjoin_with_sep(char *s1, char *s2, char *join);
+/******************************************************************************/
+/*************************************srcs*************************************/
+/******************************************************************************/
+/*				frees.c							*/
+void			free_all(t_lexer *lexer, t_ast_node *ast_root);
+void			free_cmd(t_cmd *cmd);
+/*				init_shell.c					*/
+void			shell_init(t_lexer *lexer, t_ast_node **root, char *envp[]);
+/*				main.c							*/
+void			print_error_msg(t_lexer *lexer);
+void			actualise_exit_status(int status);
+/*				signal_handling.c				*/
+void			set_signal_handling(void);
 #endif

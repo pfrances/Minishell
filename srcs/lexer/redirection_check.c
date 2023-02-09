@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 11:07:44 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:42:06 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,6 @@ bool	is_valid_starting_filename(char filename_start)
 		|| filename_start == '\0')
 		return (false);
 	return (true);
-}
-
-size_t	skip_quote_content(char *str)
-{
-	size_t	i;
-	char	start;
-
-	start = *str;
-	i = 0;
-	if (start != '\'' && start != '"')
-		return (i);
-	i++;
-	while (str[i] != start)
-		i++;
-	return (i++);
 }
 
 bool	check_redirection(t_lexer *lexer, char *cmd, size_t len)

@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   skip_quote_content.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/09 15:42:36 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/09 15:42:47 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+size_t	skip_quote_content(char *str)
 {
-	t_ast_node	*node;
+	size_t	i;
+	char	start;
 
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
-	{
-		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
-	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	start = *str;
+	i = 0;
+	if (start != '\'' && start != '"')
+		return (i);
+	i++;
+	while (str[i] != start)
+		i++;
+	return (i++);
 }

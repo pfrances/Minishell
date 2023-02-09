@@ -1,30 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   actualise_exit_status.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/09 20:54:12 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/09 20:54:35 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+void	actualise_exit_status(int status)
 {
-	t_ast_node	*node;
-
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
-	{
+	g_state.exit_status = status;
+	free(g_state.exit_status_str);
+	g_state.exit_status_str = ft_itoa(status);
+	if (g_state.exit_status_str == NULL)
 		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
-	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
 }

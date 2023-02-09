@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:16:22 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/05 13:44:02 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/07 20:16:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	set_here_doc_pipe(t_cmd *cmd, char *here_doc_input)
 	}
 }
 
-void	set_here_doc(t_cmd *cmd, t_input_output *input_output)
+void	set_here_doc(t_cmd *cmd, t_redirect *redirect)
 {
 	char	*here_doc_input;
 	char	*new_line;
@@ -38,7 +38,7 @@ void	set_here_doc(t_cmd *cmd, t_input_output *input_output)
 		new_line = readline("here_doc > ");
 		if (new_line == NULL)
 			g_state.error_state = CMD_STOP;
-		else if (ft_strncmp(new_line, input_output->filename,
+		else if (ft_strncmp(new_line, redirect->filename,
 				ft_strlen(new_line) + 1) == 0)
 			break ;
 		else if (here_doc_input[0] == '\0')

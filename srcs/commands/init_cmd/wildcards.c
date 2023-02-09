@@ -6,11 +6,54 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 17:48:20 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/09 16:16:18 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*add_filename_to_result(char *result, char *filename)
+{
+	if (*result == '\0')
+		result = strjoin_with_sep(result, filename, "");
+	else
+		result = strjoin_with_sep(result, filename, " ");
+	if (result == NULL)
+	{
+		g_state.error_state = ALLOCATION_FAILED;
+		return (NULL);
+	}
+	return (result);
+}
+
+char	*search_in_current_dir(char *token)
+{
+	DIR				*current_dir;
+	struct dirent	*entry;
+	char			*result;
+
+	result = ft_calloc(1, sizeof(char));
+	current_dir = opendir(".");
+	if (current_dir == NULL)
+	{
+		perror("opendir");
+		return (NULL);
+	}
+	entry = readdir(current_dir);
+	while (entry != NULL && g_state.error_state == NO_ERROR)
+	{
+		if (wildcards_match(token, entry->d_name))
+			result = add_filename_to_result(result, entry->d_name);
+		entry = readdir(current_dir);
+	}
+	if (closedir(current_dir) < 0)
+	{
+		free(result);
+		perror("closedir");
+		return (NULL);
+	}
+	return (result);
+}
 
 char	*get_wildcards_token(char *lexem, size_t *start)
 {
@@ -39,79 +82,6 @@ char	*get_wildcards_token(char *lexem, size_t *start)
 	return (NULL);
 }
 
-size_t	skip_wildcard_content(char *token, char *filename)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	while (token[i] != '\0' && token[i] != '*')
-		i++;
-	j = 0;
-	if (token[i] == '\0')
-		i++;
-	while (filename[j] != '\0' && ft_strncmp(&filename[j], token, i) != 0)
-		j++;
-	return (j);
-}
-
-bool	match(char *token, char *filename)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	j = 0;
-	while (token[i] != '\0' && (filename[j] != '\0' || token[i] == '*'))
-	{
-		if (token[i] == '*')
-		{
-			while (token[i] == '*')
-				i++;
-			if (token[i] == '\0')
-				return (true);
-			j += skip_wildcard_content(&token[i], &filename[j]);
-		}
-		else if (token[i] == filename[j])
-		{
-			i++;
-			j++;
-		}
-		else
-			return (false);
-	}
-	return (token[i] == filename[j]);
-}
-
-char	*search_in_current_dir(char *token)
-{
-	DIR				*current_dir;
-	struct dirent	*entry;
-	char			*result;
-
-	result = ft_calloc(1, sizeof(char));
-	current_dir = opendir(".");
-	if (current_dir == NULL)
-	{
-		perror("opendir");
-		return (NULL);
-	}
-	entry = readdir(current_dir);
-	while (entry != NULL && g_state.error_state == NO_ERROR)
-	{
-		if (match(token, entry->d_name))
-			result = add_filename_to_result(result, entry);
-		entry = readdir(current_dir);
-	}
-	if (closedir(current_dir) < 0)
-	{
-		free(result);
-		perror("closedir");
-		return (NULL);
-	}
-	return (result);
-}
-
 void	expend_wildcards(char **lexem)
 {
 	char	*token;
@@ -130,7 +100,7 @@ void	expend_wildcards(char **lexem)
 		}
 		if (*patern != '\0')
 		{
-			*lexem = update_lexem(*lexem, token, patern, start);
+			*lexem = update_cmd_lexem(*lexem, token, patern, start);
 			i = start + ft_strlen(patern);
 		}
 		else

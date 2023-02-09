@@ -1,30 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_node.c                                      :+:      :+:    :+:   */
+/*   split_env_var.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/08 10:24:36 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/08 10:25:17 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*create_node(t_lexer *lexer)
+bool	split_env_var(char *var, char **var_name, char **var_value)
 {
-	t_ast_node	*node;
+	size_t	i;
 
-	node = malloc(sizeof(t_ast_node));
-	if (node == NULL)
+	i = 0;
+	if (var[i] == '=' || ft_strchr(var, '=') == NULL)
+		return (false);
+	i++;
+	while (var[i] != '=')
+		i++;
+	*var_name = ft_strndup(var, i);
+	*var_value = ft_strdup(var + i + 1);
+	if (*var_name == NULL || *var_value == NULL)
 	{
 		g_state.error_state = ALLOCATION_FAILED;
-		return (NULL);
+		return (false);
 	}
-	node->token = lexer->current_token;
-	node->cmd = NULL;
-	node->left = NULL;
-	node->right = NULL;
-	return (node);
+	return (true);
 }
