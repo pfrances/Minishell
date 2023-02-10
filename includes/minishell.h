@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:12:30 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:12:45 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@
 # define PROMPT_INDENT " > "
 # define ERROR_SYNTAX_MSG "	Syntax error - unexpected token: "
 # define ERROR_ALLOCATION_MSG "	Failed to allocate memory"
-# define ENV_ERROR_MSG "	Failed to deal with environment variable"
 # define PROGRAM_STOP_MSG "exit"
 
 /******************************************************************************/
@@ -85,7 +84,6 @@ typedef struct s_cmd
 	int				input_fd_save;
 	int				output_fd;
 	int				output_fd_save;
-	char			**all_path;
 }	t_cmd;
 /******************************************************************************/
 /**********************************ast_struct**********************************/
@@ -144,10 +142,9 @@ typedef enum e_error_state_enum
 	NO_ERROR,
 	SYNTAX_ERROR,
 	CMD_STOP,
-	ALLOCATION_FAILED,
+	MALLOC_FAILED,
 	PIPE_FAILED,
 	FORK_FAILED,
-	ENV_ERROR,
 	PROGRAM_STOP,
 	EXIT_CALL
 }	t_error_state_enum;
@@ -161,7 +158,7 @@ typedef enum e_current_phase
 
 typedef struct s_pgrm_state
 {
-	t_error_state_enum	error_state;
+	t_error_state_enum	error;
 	size_t				error_index;
 	bool				stop_signal_flag;
 	t_current_phase		current_phase;
@@ -211,12 +208,14 @@ void			open_input_files(t_cmd *cmd, t_redirect *redirect);
 void			set_redirections(t_cmd *cmd);
 void			reset_redirections(t_cmd *cmd);
 /*---------------------------srs/commands/init_cmd----------------------------*/
+/*				allocate_cmd.c				*/
+t_cmd			*allocate_cmd(char *lexem);
 /*				expand_env_var.c			*/
 char			*expand_env_var(char *lexem);
 /*				get_command_path.c			*/
 char			*get_cmd_path(char *name, char **env_paths);
 /*				init_cmd.c					*/
-t_cmd			*init_cmd(t_token *token);
+t_cmd			*init_cmd(char *lexem);
 /*				set_input_output_args.c		*/
 void			set_input_output_args(t_cmd *cmd, char *lexem);
 /*				update_cmd_lexem.c			*/
@@ -297,7 +296,7 @@ char			*strjoin_with_sep(char *s1, char *s2, char *join);
 void			free_all(t_lexer *lexer, t_ast_node *ast_root);
 void			free_cmd(t_cmd *cmd);
 /*				init_shell.c					*/
-void			shell_init(t_lexer *lexer, t_ast_node **root, char *envp[]);
+void			init_shell(t_lexer *lexer, t_ast_node **root, char *envp[]);
 /*				main.c							*/
 void			print_error_msg(t_lexer *lexer);
 void			actualise_exit_status(int status);

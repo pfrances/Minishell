@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_init.c                                       :+:      :+:    :+:   */
+/*   init_lexer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:18:01 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 20:22:21 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	read_first_line(t_lexer *lexer)
 		lexer->index = 0;
 		if (lexer->input == NULL)
 		{
-			g_state.error_state = PROGRAM_STOP;
+			g_state.error = PROGRAM_STOP;
 			return (false);
 		}
 		while (ft_isspace(lexer->input[lexer->index]) == true)

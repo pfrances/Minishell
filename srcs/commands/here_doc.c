@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:16:22 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 20:16:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ void	set_here_doc(t_cmd *cmd, t_redirect *redirect)
 	char	*new_line;
 
 	here_doc_input = ft_calloc(1, sizeof(char));
-	while (g_state.error_state == NO_ERROR)
+	while (g_state.error == NO_ERROR)
 	{
 		new_line = readline("here_doc > ");
 		if (new_line == NULL)
-			g_state.error_state = CMD_STOP;
+			g_state.error = CMD_STOP;
 		else if (ft_strncmp(new_line, redirect->filename,
 				ft_strlen(new_line) + 1) == 0)
 			break ;

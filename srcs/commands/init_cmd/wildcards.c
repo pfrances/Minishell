@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 16:16:18 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*add_filename_to_result(char *result, char *filename)
 		result = strjoin_with_sep(result, filename, " ");
 	if (result == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	return (result);
@@ -40,7 +40,7 @@ char	*search_in_current_dir(char *token)
 		return (NULL);
 	}
 	entry = readdir(current_dir);
-	while (entry != NULL && g_state.error_state == NO_ERROR)
+	while (entry != NULL && g_state.error == NO_ERROR)
 	{
 		if (wildcards_match(token, entry->d_name))
 			result = add_filename_to_result(result, entry->d_name);
@@ -95,7 +95,7 @@ void	expend_wildcards(char **lexem)
 		patern = search_in_current_dir(token);
 		if (patern == NULL)
 		{
-			g_state.error_state = ALLOCATION_FAILED;
+			g_state.error = MALLOC_FAILED;
 			return ;
 		}
 		if (*patern != '\0')

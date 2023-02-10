@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:13:39 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 17:06:41 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:48:08 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	execute_ast(t_ast_node *node)
 {
-	if (g_state.error_state != NO_ERROR)
+	if (g_state.error != NO_ERROR)
 		return ;
 	if (node->token->type == COMMAND)
 		execute_command(node);

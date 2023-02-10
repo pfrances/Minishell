@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 15:42:06 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ bool	is_redirection_token(char *cmd, size_t *index)
 bool	is_valid_starting_filename(char filename_start)
 {
 	if (filename_start == ';'
+		|| filename_start == '$'
 		|| filename_start == '&'
 		|| filename_start == '|'
 		|| filename_start == '>'
@@ -67,7 +68,7 @@ bool	check_redirection(t_lexer *lexer, char *cmd, size_t len)
 				i++;
 			if (is_valid_starting_filename(cmd[i]) == false)
 			{
-				g_state.error_state = SYNTAX_ERROR;
+				g_state.error = SYNTAX_ERROR;
 				g_state.error_index = lexer->index + i;
 				return (false);
 			}

@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/09 22:13:01 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/10 10:03:28 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,8 @@ OBJS += $(BUILTINS_OBJS)
 COMMANDS_SRCS_DIR = $(SRCS_DIR)/commands
 COMMANDS_OBJS_DIR = $(OBJS_DIR)/commands
 CMD_INIT_DIR = init_cmd
-COMMANDS_SRCS = $(addprefix $(COMMANDS_SRCS_DIR)/,	$(CMD_INIT_DIR)/expand_env_var.c		\
+COMMANDS_SRCS = $(addprefix $(COMMANDS_SRCS_DIR)/,	$(CMD_INIT_DIR)/allocate_cmd.c			\
+													$(CMD_INIT_DIR)/expand_env_var.c		\
 													$(CMD_INIT_DIR)/get_command_path.c		\
 													$(CMD_INIT_DIR)/init_cmd.c				\
 													$(CMD_INIT_DIR)/set_input_output_args.c	\

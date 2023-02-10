@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:28:16 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 20:55:59 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:49:40 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ void	execute_pipe(t_ast_node *node)
 	int		fd[2];
 	pid_t	pid;
 
-	if (g_state.error_state != NO_ERROR)
+	if (g_state.error != NO_ERROR)
 		return ;
 	if (pipe(fd) == -1)
 	{
-		g_state.error_state = PIPE_FAILED;
+		g_state.error = PIPE_FAILED;
 		return ;
 	}
 	pid = fork();
@@ -58,5 +58,5 @@ void	execute_pipe(t_ast_node *node)
 	else if (pid > 0)
 		execute_right_pipe(pid, node, fd);
 	else
-		g_state.error_state = FORK_FAILED;
+		g_state.error = FORK_FAILED;
 }

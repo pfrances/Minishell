@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:58:09 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 16:14:59 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*update_cmd_lexem(char *lexem, char *token, char *patern, size_t start)
 	result = malloc(sizeof(char) * (lexem_len - token_len + patern_len + 1));
 	if (result == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		free(lexem);
 		return (NULL);
 	}

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:17:28 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_ast_node	*create_node(t_lexer *lexer)
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	node->token = lexer->current_token;

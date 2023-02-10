@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:22:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/04 17:29:41 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:10:21 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ char	*get_cmd_path(char *name, char **env_paths)
 
 	if (name == NULL)
 		return (NULL);
+	if (env_paths == NULL)
+		return (ft_strdup(name));
 	if (access(name, X_OK) == 0)
 		return (ft_strdup(name));
 	i = 0;

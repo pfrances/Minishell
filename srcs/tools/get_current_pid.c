@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 20:52:12 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 21:29:07 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ char	*get_current_pid_str(void)
 		waitpid(pid, NULL, 0);
 		pid_str = ft_itoa(pid);
 		if (pid_str == NULL)
-			g_state.error_state = ALLOCATION_FAILED;
+			g_state.error = MALLOC_FAILED;
 		return (pid_str);
 	}
 	perror("fork failed");
-	g_state.error_state = FORK_FAILED;
+	g_state.error = FORK_FAILED;
 	return (NULL);
 }

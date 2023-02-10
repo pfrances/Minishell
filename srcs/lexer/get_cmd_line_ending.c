@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:24:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/08 17:26:39 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ bool	get_cmd_line_ending(t_lexer *lexer)
 	{
 		free(input);
 		if (g_state.stop_signal_flag == true)
-			g_state.error_state = CMD_STOP;
+			g_state.error = CMD_STOP;
 		else
-			g_state.error_state = PROGRAM_STOP;
+			g_state.error = PROGRAM_STOP;
 		return (false);
 	}
 	if (lexer->current_token_type == COMMAND)
@@ -61,7 +61,7 @@ bool	get_cmd_line_ending(t_lexer *lexer)
 	free(input);
 	if (lexer->input == NULL || update_last_command(lexer) == false)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (false);
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 21:05:34 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 21:32:28 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:49:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,27 +49,29 @@ char	*search_env_var(char *lexem)
 		i++;
 	name = ft_strndup(lexem, i);
 	if (name == NULL)
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 	return (name);
 }
 
 void	expend_single_var(char **value, char **name, char **lexem, size_t *i)
 {
-	if (*value == NULL)
+	if (*value == NULL && ((*name)[1] == '$' || (*name)[1] == '?'))
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		free(*name);
 		free(*lexem);
+		*lexem = NULL;
 		return ;
 	}
-	*value = expand_env_var(*value);
+	if (*value != NULL)
+		*value = expand_env_var(*value);
 	*lexem = update_cmd_lexem(*lexem, *name, *value, *i);
 	if (*value != NULL)
 		*i += ft_strlen(*value);
 	free(*name);
 	free(*value);
-	if (lexem == NULL)
-		g_state.error_state = ALLOCATION_FAILED;
+	if (*lexem == NULL)
+		g_state.error = MALLOC_FAILED;
 }
 
 char	*expand_env_var(char *lexem)
@@ -79,7 +81,7 @@ char	*expand_env_var(char *lexem)
 	char	*value;
 
 	i = 0;
-	while (g_state.error_state == NO_ERROR && lexem[i] != '\0')
+	while (g_state.error == NO_ERROR && lexem != NULL && lexem[i] != '\0')
 	{
 		if (lexem[i] == '\'')
 			i += skip_simple_quote(&lexem[i]);

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:21:33 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:50:10 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ void	execute_command(t_ast_node *cmd_node)
 {
 	pid_t	pid;
 
-	cmd_node->cmd = init_cmd(cmd_node->token);
-	if (g_state.error_state != NO_ERROR)
+	cmd_node->cmd = init_cmd(cmd_node->token->lexem);
+	if (g_state.error != NO_ERROR)
 		return ;
 	set_redirections(cmd_node->cmd);
-	if (g_state.error_state != NO_ERROR)
+	if (g_state.error != NO_ERROR)
 		return (free_cmd(cmd_node->cmd));
 	if (cmd_node->cmd->builtin_type != NOT_BUILTIN)
 		execute_builtin(cmd_node->cmd);
@@ -50,7 +50,7 @@ void	execute_command(t_ast_node *cmd_node)
 		else
 		{
 			perror("fork failed");
-			g_state.error_state = FORK_FAILED;
+			g_state.error = FORK_FAILED;
 		}
 	}
 	reset_redirections(cmd_node->cmd);

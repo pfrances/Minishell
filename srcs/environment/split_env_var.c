@@ -26,7 +26,9 @@ bool	split_env_var(char *var, char **var_name, char **var_value)
 	*var_value = ft_strdup(var + i + 1);
 	if (*var_name == NULL || *var_value == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
+		free(*var_name);
+		free(*var_value);
 		return (false);
 	}
 	return (true);

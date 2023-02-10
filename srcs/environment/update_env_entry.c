@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 10:22:05 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/08 14:21:06 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	update_env_entry(char *entry, char *var_name)
 			free(g_state.envp[i]);
 			g_state.envp[i] = ft_strdup(entry);
 			if (g_state.envp[i] == NULL)
-				g_state.error_state = ALLOCATION_FAILED;
+				g_state.error = MALLOC_FAILED;
 			return ;
 		}
 		i++;

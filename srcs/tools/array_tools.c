@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 12:38:56 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/08 13:03:39 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	**resize_array(char **array, int diff)
 	new_array = malloc(sizeof(char *) * (array_len((void **)array) + 1 + diff));
 	if (new_array == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	return (new_array);
@@ -58,7 +58,7 @@ char	**dup_array(char **array)
 	dup = malloc(sizeof(char *) * (array_len((void **)array) + 1));
 	if (dup == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	i = 0;
@@ -70,7 +70,7 @@ char	**dup_array(char **array)
 			while (i--)
 				free(dup[i]);
 			free(dup);
-			g_state.error_state = ALLOCATION_FAILED;
+			g_state.error = MALLOC_FAILED;
 			return (NULL);
 		}
 		i++;

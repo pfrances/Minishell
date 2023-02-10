@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 11:56:04 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/07 20:16:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*get_cmd_token(char *str, size_t *lexem_index)
 	}
 	cmd_token = ft_strndup(str, i);
 	if (cmd_token == NULL)
-		g_state.error_state = ALLOCATION_FAILED;
+		return (NULL);
 	*lexem_index += i;
 	remove_quotes(cmd_token);
 	return (cmd_token);
@@ -73,7 +73,7 @@ t_redirect	*set_input(char *lexem, size_t *i)
 	input = malloc(sizeof(t_redirect));
 	if (input == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	if (lexem[*i] == lexem[*i + 1])
@@ -84,6 +84,12 @@ t_redirect	*set_input(char *lexem, size_t *i)
 	while (ft_isspace(lexem[*i]) == true)
 		(*i)++;
 	input->filename = get_cmd_token(&lexem[*i], i);
+	if (input->filename == NULL)
+	{
+		free(input);
+		g_state.error = MALLOC_FAILED;
+		return (NULL);
+	}
 	return (input);
 }
 
@@ -94,7 +100,7 @@ t_redirect	*set_output(char *lexem, size_t *i)
 	output = malloc(sizeof(t_redirect));
 	if (output == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NULL);
 	}
 	if (lexem[*i] == lexem[*i + 1])
@@ -105,6 +111,12 @@ t_redirect	*set_output(char *lexem, size_t *i)
 	while (ft_isspace(lexem[*i]) == true)
 		(*i)++;
 	output->filename = get_cmd_token(&lexem[*i], i);
+	if (output->filename == NULL)
+	{
+		free(output);
+		g_state.error = MALLOC_FAILED;
+		return (NULL);
+	}
 	return (output);
 }
 
@@ -117,7 +129,7 @@ void	set_input_output_args(t_cmd *cmd, char *lexem)
 	input_output_cnt = 0;
 	args_cnt = 0;
 	i = 0;
-	while (g_state.error_state == NO_ERROR && lexem[i] != '\0')
+	while (g_state.error == NO_ERROR && lexem[i] != '\0')
 	{
 		while (ft_isspace(lexem[i]) == true)
 			i++;

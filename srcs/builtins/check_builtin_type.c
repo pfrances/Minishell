@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 20:11:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:20:14 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_builtin_type	check_builtin_type(char **cmd_args)
 	name = set_name_to_lower(cmd_args[0]);
 	if (name == NULL)
 	{
-		g_state.error_state = ALLOCATION_FAILED;
+		g_state.error = MALLOC_FAILED;
 		return (NOT_BUILTIN);
 	}
 	len = ft_strlen(name);
