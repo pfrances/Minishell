@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 19:31:39 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:20:25 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:32:54 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	execute_builtin(t_cmd *cmd)
 {
-	set_redirections(cmd);
 	if (cmd->builtin_type == _ECHO)
 		builtin_echo(cmd);
 	else if (cmd->builtin_type == CD)
@@ -29,5 +28,4 @@ void	execute_builtin(t_cmd *cmd)
 		builtin_env(cmd);
 	else if (cmd->builtin_type == EXIT)
 		builtin_exit(cmd);
-	reset_redirections(cmd);
 }

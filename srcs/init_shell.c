@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 22:34:37 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:41:26 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 10:33:30 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	init_shell(t_lexer *lexer, t_ast_node **root, char *envp[])
 {
+	g_state.error = NO_ERROR;
 	*root = NULL;
 	g_state.exit_status_str = NULL;
 	actualise_exit_status(0);
@@ -28,10 +29,10 @@ void	init_shell(t_lexer *lexer, t_ast_node **root, char *envp[])
 		g_state.error = MALLOC_FAILED;
 	lexer->list_head = NULL;
 	lexer->input = NULL;
-	if (g_state.error == MALLOC_FAILED)
+	g_state.current_pid_str = get_current_pid_str();
+	if (g_state.error != NO_ERROR)
 	{
 		free_all(lexer, *root);
 		exit(EXIT_FAILURE);
 	}
-	g_state.error = NO_ERROR;
 }

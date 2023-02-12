@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 21:05:34 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:49:07 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 10:33:44 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ char	*expand_env_var(char *lexem)
 		if (name != NULL)
 		{
 			if (name[1] == '$')
-				value = get_current_pid_str();
+				value = ft_strdup(g_state.current_pid_str);
 			else if (name[1] == '?')
 				value = ft_strdup(g_state.exit_status_str);
 			else

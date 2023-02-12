@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 11:53:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 12:34:09 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ bool	is_redirection_token(char *cmd, size_t *index)
 bool	is_valid_starting_filename(char filename_start)
 {
 	if (filename_start == ';'
-		|| filename_start == '$'
 		|| filename_start == '&'
 		|| filename_start == '|'
 		|| filename_start == '>'

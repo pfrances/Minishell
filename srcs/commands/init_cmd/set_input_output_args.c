@@ -6,37 +6,11 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 11:56:04 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 10:22:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	remove_quotes(char *cmd_token)
-{
-	size_t	i;
-	size_t	j;
-	size_t	token_len;
-
-	token_len = ft_strlen(cmd_token);
-	i = 0;
-	while (cmd_token[i] != '\0')
-	{
-		if (cmd_token[i] == '\'' || cmd_token[i] == '"')
-		{
-			j = i + 1;
-			while (cmd_token[j] != cmd_token[i])
-				j++;
-			ft_memmove(&cmd_token[i], &cmd_token[i + 1], token_len - i);
-			cmd_token[--token_len] = '\0';
-			ft_memmove(&cmd_token[j - 1], &cmd_token[j], token_len - j);
-			cmd_token[--token_len] = '\0';
-			i = j - 1;
-		}
-		else
-			i++;
-	}
-}
 
 char	*get_cmd_token(char *str, size_t *lexem_index)
 {
@@ -77,9 +51,9 @@ t_redirect	*set_input(char *lexem, size_t *i)
 		return (NULL);
 	}
 	if (lexem[*i] == lexem[*i + 1])
-			input->type = STD_INPUT;
+		input->type = STD_INPUT;
 	else
-			input->type = FILE_INPUT;
+		input->type = FILE_INPUT;
 	(*i) += 1 + (input->type == STD_INPUT);
 	while (ft_isspace(lexem[*i]) == true)
 		(*i)++;

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 11:12:45 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 13:55:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <stdbool.h>
 # include <termios.h>
 # include <dirent.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -142,6 +143,7 @@ typedef enum e_error_state_enum
 	NO_ERROR,
 	SYNTAX_ERROR,
 	CMD_STOP,
+	FILE_OPENING_FAILED,
 	MALLOC_FAILED,
 	PIPE_FAILED,
 	FORK_FAILED,
@@ -165,6 +167,8 @@ typedef struct s_pgrm_state
 	int					exit_status;
 	char				*exit_status_str;
 	char				**envp;
+	char				*current_pid_str;
+	char				*last_dir_name;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
 t_pgrm_state	g_state;
@@ -232,6 +236,8 @@ bool			wildcards_match(char *token, char *filename);
 void			add_entry_to_env(char *entry);
 /*				cmp_var_names.c			*/
 bool			cmp_var_names(char *entry, char *var_name);
+/*				compose_new_entry.c		*/
+char			*compose_new_env_entry(char *env_name, char *env_value);
 /*				get_env_path_array.c	*/
 char			**get_env_path_array(void);
 /*				get_env_value.c			*/
@@ -285,9 +291,11 @@ size_t			array_len(void **array);
 char			*get_current_pid_str(void);
 /*				ft_split_charset.c					*/
 char			**ft_split_charset(char *input, const char *charset);
-/*				skip_quote_content.c				*/
+/*				quotes_tools.c							*/
+char			*put_in_double_quotes(char *str);
+void			remove_quotes(char *cmd_token);
 size_t			skip_quote_content(char *str);
-/*				str_tools.c							*/
+/*				strjoin_with_sep.c							*/
 char			*strjoin_with_sep(char *s1, char *s2, char *join);
 /******************************************************************************/
 /*************************************srcs*************************************/

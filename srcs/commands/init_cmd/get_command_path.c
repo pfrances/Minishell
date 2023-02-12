@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:22:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 11:10:21 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 20:04:16 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*get_cmd_path(char *name, char **env_paths)
 		return (NULL);
 	if (env_paths == NULL)
 		return (ft_strdup(name));
-	if (access(name, X_OK) == 0)
+	if (access(name, F_OK) == 0)
 		return (ft_strdup(name));
 	i = 0;
 	while (env_paths[i] != NULL && name[0] != '\0')
@@ -48,7 +48,7 @@ char	*get_cmd_path(char *name, char **env_paths)
 		path = join_to_create_full_path(env_paths[i], name);
 		if (path == NULL)
 			return (NULL);
-		if (access(path, X_OK) == 0)
+		if (access(path, F_OK) == 0)
 			return (path);
 		free(path);
 		i++;

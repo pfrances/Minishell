@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/10 10:03:28 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/12 13:55:28 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,6 +79,7 @@ ENVIRONMENT_SRCS_DIR = $(SRCS_DIR)/environment
 ENVIRONMENT_OBJS_DIR = $(OBJS_DIR)/environment
 ENVIRONMENT_SRCS = $(addprefix $(ENVIRONMENT_SRCS_DIR)/,	add_env_entry.c			\
 															cmp_var_names.c			\
+															compose_new_entry.c		\
 															get_env_path_array.c	\
 															get_env_value.c			\
 															is_var_in_env.c			\
@@ -123,8 +124,8 @@ TOOLS_SRCS = $(addprefix $(TOOLS_SRCS_DIR)/,		actualise_exit_status.c	\
 													array_tools.c			\
 													ft_split_charset.c		\
 													get_current_pid.c		\
-													skip_quote_content.c	\
-													str_tools.c)
+													quotes_tools.c			\
+													strjoin_with_sep.c)
 TOOLS_OBJS = $(subst $(TOOLS_SRCS_DIR), $(TOOLS_OBJS_DIR), $(TOOLS_SRCS:.c=.o))
 SRCS += $(TOOLS_SRCS)
 OBJS += $(TOOLS_OBJS)

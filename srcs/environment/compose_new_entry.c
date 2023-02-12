@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   skip_quote_content.c                               :+:      :+:    :+:   */
+/*   compose_new_entry.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/09 15:42:36 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 15:42:47 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/12 13:54:30 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/12 14:12:46 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-size_t	skip_quote_content(char *str)
+char	*compose_new_env_entry(char *env_name, char *env_value)
 {
-	size_t	i;
-	char	start;
+	char	*new_entry;
 
-	start = *str;
-	i = 0;
-	if (start != '\'' && start != '"')
-		return (i);
-	i++;
-	while (str[i] != start)
-		i++;
-	return (i++);
+	if (env_name == NULL)
+		return (NULL);
+	if (env_value != NULL)
+		new_entry = strjoin_with_sep(ft_strdup(env_name), env_value, "=");
+	else
+		new_entry = ft_strjoin(env_name, "=");
+	if (new_entry == NULL)
+		g_state.error = MALLOC_FAILED;
+	return (new_entry);
 }

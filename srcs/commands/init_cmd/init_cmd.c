@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:46:41 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 11:10:42 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/11 18:53:38 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,11 @@ t_cmd	*init_cmd(char *lexem)
 	}
 	set_up_cmd_struct(cmd, expanded_lexem);
 	free(expanded_lexem);
-	if (g_state.error != NO_ERROR)
+	if (g_state.error == NO_ERROR)
+		return (cmd);
+	else
 	{
 		free_cmd(cmd);
 		return (NULL);
 	}
-	return (cmd);
 }

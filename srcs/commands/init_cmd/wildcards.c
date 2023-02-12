@@ -6,46 +6,49 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/11 18:18:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*add_filename_to_result(char *result, char *filename)
+char	*loop_on_every_file(char *token, DIR *current_dir)
 {
-	if (*result == '\0')
-		result = strjoin_with_sep(result, filename, "");
-	else
-		result = strjoin_with_sep(result, filename, " ");
+	struct dirent	*entry;
+	char			*result;
+
+	result = ft_calloc(1, sizeof(char));
 	if (result == NULL)
 	{
 		g_state.error = MALLOC_FAILED;
 		return (NULL);
+	}
+	entry = readdir(current_dir);
+	while (entry != NULL && g_state.error == NO_ERROR)
+	{
+		if (wildcards_match(token, entry->d_name) == true)
+		{
+			result = strjoin_with_sep(result, entry->d_name, " ");
+			if (result == NULL)
+				g_state.error = MALLOC_FAILED;
+		}
+		entry = readdir(current_dir);
 	}
 	return (result);
 }
 
 char	*search_in_current_dir(char *token)
 {
-	DIR				*current_dir;
-	struct dirent	*entry;
-	char			*result;
+	DIR		*current_dir;
+	char	*result;
 
-	result = ft_calloc(1, sizeof(char));
 	current_dir = opendir(".");
 	if (current_dir == NULL)
 	{
 		perror("opendir");
 		return (NULL);
 	}
-	entry = readdir(current_dir);
-	while (entry != NULL && g_state.error == NO_ERROR)
-	{
-		if (wildcards_match(token, entry->d_name))
-			result = add_filename_to_result(result, entry->d_name);
-		entry = readdir(current_dir);
-	}
+	result = loop_on_every_file(token, current_dir);
 	if (closedir(current_dir) < 0)
 	{
 		free(result);

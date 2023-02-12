@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:50:10 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/12 10:51:45 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,29 @@ void	child_process_job(t_cmd *cmd)
 	exit(EXIT_FAILURE);
 }
 
-void	parent_process_job(pid_t pid)
+bool	set_up_before_execution(t_ast_node *cmd_node)
 {
-	int	status;
-
-	waitpid(pid, &status, 0);
-	actualise_exit_status(WEXITSTATUS(status));
+	cmd_node->cmd = init_cmd(cmd_node->token->lexem);
+	if (cmd_node->cmd == NULL)
+		return (false);
+	set_redirections(cmd_node->cmd);
+	if (g_state.error != NO_ERROR)
+	{
+		free_cmd(cmd_node->cmd);
+		cmd_node->cmd = NULL;
+		return (false);
+	}
+	return (true);
 }
 
 void	execute_command(t_ast_node *cmd_node)
 {
 	pid_t	pid;
+	int		status;
 
-	cmd_node->cmd = init_cmd(cmd_node->token->lexem);
-	if (g_state.error != NO_ERROR)
+	if (set_up_before_execution(cmd_node) == false)
 		return ;
-	set_redirections(cmd_node->cmd);
-	if (g_state.error != NO_ERROR)
-		return (free_cmd(cmd_node->cmd));
+	status = 0;
 	if (cmd_node->cmd->builtin_type != NOT_BUILTIN)
 		execute_builtin(cmd_node->cmd);
 	else
@@ -46,13 +51,15 @@ void	execute_command(t_ast_node *cmd_node)
 		if (pid == 0)
 			child_process_job(cmd_node->cmd);
 		else if (pid > 0)
-			parent_process_job(pid);
+			waitpid(pid, &status, 0);
 		else
 		{
 			perror("fork failed");
 			g_state.error = FORK_FAILED;
 		}
 	}
+	actualise_exit_status(WEXITSTATUS(status));
 	reset_redirections(cmd_node->cmd);
 	free_cmd(cmd_node->cmd);
+	cmd_node->cmd = NULL;
 }

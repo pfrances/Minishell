@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 22:10:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/09 22:24:03 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/10 11:29:14 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	builtin_echo(t_cmd *cmd)
 
 	if (cmd->args[1] == NULL)
 	{
-		ft_printf("\n");
+		write(STDOUT_FILENO, "\n", 1);
 		return ;
 	}
 	i = skip_echo_option(cmd);
@@ -53,11 +53,11 @@ void	builtin_echo(t_cmd *cmd)
 		option = true;
 	while (cmd->args[i] != NULL)
 	{
-		ft_printf("%s", cmd->args[i]);
+		write(STDOUT_FILENO, cmd->args[i], ft_strlen(cmd->args[i]));
 		i++;
 		if (cmd->args[i] == NULL && option == false)
-			ft_printf("\n");
+			write(STDOUT_FILENO, "\n", 1);
 		else if (cmd->args[i] != NULL)
-			ft_printf(" ");
+			write(STDOUT_FILENO, " ", 1);
 	}
 }
