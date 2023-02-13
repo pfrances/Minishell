@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 10:51:45 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/13 09:58:05 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	execute_command(t_ast_node *cmd_node)
 	status = 0;
 	if (cmd_node->cmd->builtin_type != NOT_BUILTIN)
 		execute_builtin(cmd_node->cmd);
-	else
+	else if (cmd_node->cmd->path != NULL)
 	{
 		pid = fork();
 		if (pid == 0)
