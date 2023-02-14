@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/14 16:04:08 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/14 16:33:21 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -136,9 +136,11 @@ OS = $(shell uname -s)
 ifeq ($(OS),Linux)
 READLINE = -L/usr/lib/x86_64-linux-gnu -lreadline
 INCLUDE += -I/usr/include/readline/
+CFLAGS += -D IOS=0
 else
 READLINE = -L$(shell brew --prefix readline)/lib -lreadline
 INCLUDE += -I$(shell brew --prefix readline)/include
+CFLAGS += -D IOS=1
 endif
 
 all: $(NAME)

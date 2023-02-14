@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 18:16:22 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 14:04:00 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 16:33:31 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	set_here_doc_pipe(t_cmd *cmd, char *here_doc_input)
 			close(cmd->input_fd);
 		cmd->input_fd = fd[0];
 		write(fd[1], here_doc_input, ft_strlen(here_doc_input));
-		if (here_doc_input[0] != '\0')
+		if (IOS == false && here_doc_input[0] != '\0')
 			write(fd[1], "\n", 1);
 		close(fd[1]);
 	}
