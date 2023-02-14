@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:18:01 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 12:30:49 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	read_first_line(t_lexer *lexer)
 		}
 		while (ft_isspace(lexer->input[lexer->index]) == true)
 			lexer->index++;
-		if (g_state.stop_signal_flag)
+		if (g_state.stop_signal_flag == true)
 			g_state.stop_signal_flag = false;
 		else if (lexer->input[lexer->index] == '\0')
 		{

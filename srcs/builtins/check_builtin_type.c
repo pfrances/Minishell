@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 20:11:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/11 18:49:14 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:22:43 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ t_builtin_type	check_builtin_type(char **cmd_args)
 	size_t			name_len;
 	t_builtin_type	type;
 
-	if (cmd_args == NULL)
-		return (NOT_BUILTIN);
+	if (cmd_args == NULL || cmd_args[0] == NULL)
+		return (EMPTY_CMD);
 	name = set_name_to_lower(cmd_args[0]);
 	if (name == NULL)
 	{

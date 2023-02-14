@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 20:18:43 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 10:49:20 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 14:17:05 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,5 @@ void	builtin_exit(t_cmd *cmd)
 		g_state.exit_status = ft_atoi(cmd->args[1]);
 	g_state.error = EXIT_CALL;
 	reset_redirections(cmd);
-	free_cmd(cmd);
 	exit(g_state.exit_status);
 }

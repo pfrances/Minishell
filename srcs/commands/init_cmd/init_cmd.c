@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:46:41 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/11 18:53:38 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:59:15 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ void	set_up_cmd_struct(t_cmd *cmd, char *lexem)
 		cmd->path = NULL;
 }
 
-t_cmd	*init_cmd(char *lexem)
+t_cmd	*parse_cmd(char *lexem)
 {
-	t_cmd	*cmd;
 	char	*expanded_lexem;
+	t_cmd	*cmd;
 
 	expanded_lexem = expand_lexem(lexem);
 	if (expanded_lexem == NULL)
@@ -73,4 +73,21 @@ t_cmd	*init_cmd(char *lexem)
 		free_cmd(cmd);
 		return (NULL);
 	}
+}
+
+void	init_cmd(t_ast_node *node)
+{
+	if (node->has_been_init == true)
+		return ;
+	node->has_been_init = true;
+	node->cmd = parse_cmd(node->token->lexem);
+	if (node->cmd == NULL)
+		return ;
+	open_redir_files(node->cmd);
+	if (g_state.error == NO_ERROR)
+		return ;
+	free_cmd(node->cmd);
+	node->cmd = NULL;
+	if (g_state.error == FILE_OPENING_FAILED)
+		g_state.error = NO_ERROR;
 }

@@ -6,13 +6,13 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/12 13:55:28 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/14 16:04:08 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
 INCLUDE = -I includes
 
 FT_PRINTF_DIR = ./ft_printf
@@ -200,6 +200,8 @@ bonus: all
 
 install:
 	curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh
+
+update:
 	brew update && brew upgrade && brew install readline
 
-.PHONY: all clean fclean re bonus install
+.PHONY: all clean fclean re bonus install update

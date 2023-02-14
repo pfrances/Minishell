@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/13 09:58:05 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:59:04 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,39 +17,26 @@ void	child_process_job(t_cmd *cmd)
 	set_signal_handling();
 	execve(cmd->path, cmd->args, g_state.envp);
 	perror(cmd->args[0]);
-	exit(EXIT_FAILURE);
+	exit(errno);
 }
 
-bool	set_up_before_execution(t_ast_node *cmd_node)
-{
-	cmd_node->cmd = init_cmd(cmd_node->token->lexem);
-	if (cmd_node->cmd == NULL)
-		return (false);
-	set_redirections(cmd_node->cmd);
-	if (g_state.error != NO_ERROR)
-	{
-		free_cmd(cmd_node->cmd);
-		cmd_node->cmd = NULL;
-		return (false);
-	}
-	return (true);
-}
-
-void	execute_command(t_ast_node *cmd_node)
+void	execute_command(t_ast_node *node)
 {
 	pid_t	pid;
 	int		status;
 
-	if (set_up_before_execution(cmd_node) == false)
+	init_cmd(node);
+	if (node->cmd == NULL || g_state.error != NO_ERROR)
 		return ;
 	status = 0;
-	if (cmd_node->cmd->builtin_type != NOT_BUILTIN)
-		execute_builtin(cmd_node->cmd);
-	else if (cmd_node->cmd->path != NULL)
+	set_redirections(node->cmd);
+	if (node->cmd->builtin_type != NOT_BUILTIN)
+		execute_builtin(node->cmd);
+	else if (node->cmd->path != NULL)
 	{
 		pid = fork();
 		if (pid == 0)
-			child_process_job(cmd_node->cmd);
+			child_process_job(node->cmd);
 		else if (pid > 0)
 			waitpid(pid, &status, 0);
 		else
@@ -59,7 +46,5 @@ void	execute_command(t_ast_node *cmd_node)
 		}
 	}
 	actualise_exit_status(WEXITSTATUS(status));
-	reset_redirections(cmd_node->cmd);
-	free_cmd(cmd_node->cmd);
-	cmd_node->cmd = NULL;
+	reset_redirections(node->cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:44:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 23:58:59 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:36:48 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	free_syntax_tree(t_ast_node *node)
 		return ;
 	free_syntax_tree(node->left);
 	free_syntax_tree(node->right);
-	free(node->cmd);
+	free_cmd(node->cmd);
 	free(node);
 }
 

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 13:55:13 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/14 15:58:16 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ typedef enum e_builtin_type
 	EXPORT,
 	UNSET,
 	ENV,
-	EXIT
+	EXIT,
+	EMPTY_CMD
 }	t_builtin_type;
 
 typedef enum e_redirect_enum
@@ -113,6 +114,7 @@ typedef struct s_ast_node
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 	t_cmd				*cmd;
+	bool				has_been_init;
 }	t_ast_node;
 /******************************************************************************/
 /**********************************lexer_struct********************************/
@@ -142,8 +144,8 @@ typedef enum e_error_state_enum
 {
 	NO_ERROR,
 	SYNTAX_ERROR,
-	CMD_STOP,
 	FILE_OPENING_FAILED,
+	CMD_STOP,
 	MALLOC_FAILED,
 	PIPE_FAILED,
 	FORK_FAILED,
@@ -155,7 +157,8 @@ typedef enum e_current_phase
 {
 	WAITING_CMD_LINE,
 	WAITING_CMD_LINE_END,
-	EXECUTING_CMD
+	EXECUTING_CMD,
+	HERE_DOC
 }	t_current_phase;
 
 typedef struct s_pgrm_state
@@ -206,6 +209,7 @@ void			execute_pipe(t_ast_node *node);
 /*				here_doc.c				*/
 void			set_here_doc(t_cmd *cmd, t_redirect *redirect);
 /*				open_files.c			*/
+void			open_redir_files(t_cmd *cmd);
 void			open_output_files(t_cmd *cmd, t_redirect *redirect);
 void			open_input_files(t_cmd *cmd, t_redirect *redirect);
 /*				set_unset_redir.c		*/
@@ -219,7 +223,7 @@ char			*expand_env_var(char *lexem);
 /*				get_command_path.c			*/
 char			*get_cmd_path(char *name, char **env_paths);
 /*				init_cmd.c					*/
-t_cmd			*init_cmd(char *lexem);
+void			init_cmd(t_ast_node *cmd_node);
 /*				set_input_output_args.c		*/
 void			set_input_output_args(t_cmd *cmd, char *lexem);
 /*				update_cmd_lexem.c			*/
