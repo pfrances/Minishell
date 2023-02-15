@@ -12,14 +12,17 @@
 
 #include "minishell.h"
 
-bool	split_env_var(char *var, char **var_name, char **var_value)
+void	split_env_var(char *var, char **var_name, char **var_value)
 {
 	size_t	i;
 
+	if (ft_strchr(var, '=') == NULL)
+	{
+		*var_name = ft_strdup(var);
+		*var_value = NULL;
+		return ;
+	}
 	i = 0;
-	if (var[i] == '=' || ft_strchr(var, '=') == NULL)
-		return (false);
-	i++;
 	while (var[i] != '=')
 		i++;
 	*var_name = ft_strndup(var, i);
@@ -29,7 +32,9 @@ bool	split_env_var(char *var, char **var_name, char **var_value)
 		g_state.error = MALLOC_FAILED;
 		free(*var_name);
 		free(*var_value);
-		return (false);
+		*var_name = NULL;
+		*var_value = NULL;
+		return ;
 	}
-	return (true);
+	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 15:13:39 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 15:56:10 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 13:33:37 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	execute_ast(t_ast_node *node)
 	if (node->token->type == COMMAND)
 		execute_command(node);
 	else if (node->token->type == PIPE)
-		execute_pipe(node);
+		execute_pipeline(node);
 	else if (node->token->type == SEMICOLON)
 	{
 		execute_ast(node->left);

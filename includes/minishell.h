@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 15:58:16 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 23:18:03 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,11 @@
 # define TOKENS_LEN_MAX 2
 # define PROMPT_MINISHELL "Minishell > "
 # define PROMPT_INDENT " > "
+# define EXPORT_DECLARE_MSG "declare -x "
 # define ERROR_SYNTAX_MSG "	Syntax error - unexpected token: "
 # define ERROR_ALLOCATION_MSG "	Failed to allocate memory"
 # define PROGRAM_STOP_MSG "exit"
+# define ENVP_UNVALID_TOKEN_MSG "': not a valid identifier\n"
 
 /******************************************************************************/
 /**********************************cmd_struct**********************************/
@@ -114,7 +116,6 @@ typedef struct s_ast_node
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 	t_cmd				*cmd;
-	bool				has_been_init;
 }	t_ast_node;
 /******************************************************************************/
 /**********************************lexer_struct********************************/
@@ -161,6 +162,14 @@ typedef enum e_current_phase
 	HERE_DOC
 }	t_current_phase;
 
+typedef struct s_envp_entry
+{
+	char	*name;
+	char	*value;
+	char	*entry;
+	bool	is_declared;
+}	t_envp_entry;
+
 typedef struct s_pgrm_state
 {
 	t_error_state_enum	error;
@@ -169,9 +178,8 @@ typedef struct s_pgrm_state
 	t_current_phase		current_phase;
 	int					exit_status;
 	char				*exit_status_str;
+	t_envp_entry		**envp_entries;
 	char				**envp;
-	char				*current_pid_str;
-	char				*last_dir_name;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
 t_pgrm_state	g_state;
@@ -204,8 +212,8 @@ void			builtin_exit(t_cmd *cmd);
 void			execute_ast(t_ast_node *node);
 /*				execute_command.c		*/
 void			execute_command(t_ast_node *cmd_node);
-/*				execute_pipe.c			*/
-void			execute_pipe(t_ast_node *node);
+/*				execute_pipeline.c			*/
+void			execute_pipeline(t_ast_node *node);
 /*				here_doc.c				*/
 void			set_here_doc(t_cmd *cmd, t_redirect *redirect);
 /*				open_files.c			*/
@@ -223,7 +231,7 @@ char			*expand_env_var(char *lexem);
 /*				get_command_path.c			*/
 char			*get_cmd_path(char *name, char **env_paths);
 /*				init_cmd.c					*/
-void			init_cmd(t_ast_node *cmd_node);
+bool			init_cmd(t_ast_node *node);
 /*				set_input_output_args.c		*/
 void			set_input_output_args(t_cmd *cmd, char *lexem);
 /*				update_cmd_lexem.c			*/
@@ -237,23 +245,29 @@ bool			wildcards_match(char *token, char *filename);
 /********************************srcs/environment******************************/
 /******************************************************************************/
 /*				add_env_entry.c			*/
-void			add_entry_to_env(char *entry);
-/*				cmp_var_names.c			*/
-bool			cmp_var_names(char *entry, char *var_name);
-/*				compose_new_entry.c		*/
+void			add_entry_to_env(char *name, char *value);
+/*				compose_new_env_entry.c	*/
 char			*compose_new_env_entry(char *env_name, char *env_value);
+/*				check_envp_identifier.c	*/
+bool			is_valid_envp_name(char *name);
+bool			is_valid_envp_identifier(char *entry);
+void			print_envp_token_error_msg(char *name, char *builtin_name);
 /*				get_env_path_array.c	*/
 char			**get_env_path_array(void);
 /*				get_env_value.c			*/
 char			*get_env_value(char *to_find);
-/*				is_var_in_env.c			*/
-bool			is_var_in_env(char *var_name);
 /*				remove_env_entry.c		*/
 void			remove_env_entry(char *var_name);
+/*				search_entry_in_env.c			*/
+t_envp_entry	*search_entry_in_env(char *var_name);
+/*				set_up_envp.c			*/
+bool			set_up_envp(char **envp);
 /*				split_env_var.c			*/
-bool			split_env_var(char *var, char **var_name, char **var_value);
+void			split_env_var(char *var, char **var_name, char **var_value);
+/*				update_all_env.c		*/
+void			update_all_env(void);
 /*				update_env_entry.c		*/
-void			update_env_entry(char *entry, char *var_name);
+void			update_env_entry(char *name, char *value);
 /******************************************************************************/
 /**********************************srcs/lexer**********************************/
 /******************************************************************************/
@@ -288,11 +302,9 @@ t_ast_node		*parser_job(t_lexer *lexer);
 void			actualise_exit_status(int status);
 /*				array_tools.c						*/
 void			free_array(void **array);
-char			**resize_array(char **array, int difference);
+void			**resize_array(void **array, int diff);
 char			**dup_array(char **array);
 size_t			array_len(void **array);
-/*				get_current_pid_str.c					*/
-char			*get_current_pid_str(void);
 /*				ft_split_charset.c					*/
 char			**ft_split_charset(char *input, const char *charset);
 /*				quotes_tools.c							*/
@@ -307,6 +319,7 @@ char			*strjoin_with_sep(char *s1, char *s2, char *join);
 /*				frees.c							*/
 void			free_all(t_lexer *lexer, t_ast_node *ast_root);
 void			free_cmd(t_cmd *cmd);
+void			free_envp(void);
 /*				init_shell.c					*/
 void			init_shell(t_lexer *lexer, t_ast_node **root, char *envp[]);
 /*				main.c							*/

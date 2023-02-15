@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 10:22:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 12:04:52 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 21:17:20 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,19 @@ char	*tokenise_env_value(char *value)
 
 char	*get_env_value(char *var_name_to_find)
 {
-	size_t	i;
-	char	*var_name;
-	char	*var_value;
+	t_envp_entry	*entry;
+	char			*value;
 
-	i = 0;
-	while (g_state.envp[i] != NULL)
+	entry = search_entry_in_env(var_name_to_find);
+	if (entry == NULL || entry->is_declared == false)
+		return (NULL);
+	value = ft_strdup(entry->value);
+	if (value == NULL)
 	{
-		if (split_env_var(g_state.envp[i], &var_name, &var_value) == false)
-			return (NULL);
-		if (cmp_var_names(g_state.envp[i], var_name_to_find) == true)
-		{
-			free(var_name);
-			var_value = tokenise_env_value(var_value);
-			if (var_value == NULL)
-				g_state.error = MALLOC_FAILED;
-			remove_quotes(var_value);
-			return (var_value);
-		}
-		free(var_name);
-		free(var_value);
-		i++;
+		g_state.error = MALLOC_FAILED;
+		return (NULL);
 	}
-	return (NULL);
+	value = tokenise_env_value(value);
+	remove_quotes(value);
+	return (value);
 }

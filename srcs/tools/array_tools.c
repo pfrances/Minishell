@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 12:38:56 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 19:30:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	free_array(void **array)
 	free(array);
 }
 
-char	**resize_array(char **array, int diff)
+void	**resize_array(void **array, int diff)
 {
-	char	**new_array;
+	void	**new_array;
 
-	new_array = malloc(sizeof(char *) * (array_len((void **)array) + 1 + diff));
+	new_array = malloc(sizeof(void *) * (array_len((void **)array) + 1 + diff));
 	if (new_array == NULL)
 	{
 		g_state.error = MALLOC_FAILED;

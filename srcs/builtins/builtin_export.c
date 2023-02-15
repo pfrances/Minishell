@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 22:20:34 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/11 18:04:54 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 22:38:30 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,22 @@
 
 void	export_without_arg(void)
 {
-	size_t	i;
-	size_t	j;
+	size_t			i;
+	t_envp_entry	*entry;
 
 	i = 0;
-	while (g_state.envp[i] != NULL)
+	while (g_state.envp_entries[i] != NULL)
 	{
-		j = 0;
-		while (g_state.envp[i][j] != '=')
-			j++;
-		write(STDOUT_FILENO, g_state.envp[i], j - 1);
-		write(STDOUT_FILENO, "=\"", 2);
-		write(STDOUT_FILENO, &g_state.envp[i][j],
-			ft_strlen(&g_state.envp[i][j]));
-		write(STDOUT_FILENO, "\"\n", 2);
+		entry = g_state.envp_entries[i];
+		write(STDOUT_FILENO, EXPORT_DECLARE_MSG, ft_strlen(EXPORT_DECLARE_MSG));
+		write(STDOUT_FILENO, entry->name, ft_strlen(entry->name));
+		if (entry->is_declared == true)
+		{
+			write(STDOUT_FILENO, "=\"", 2);
+			write(STDOUT_FILENO, entry->value, ft_strlen(entry->value));
+			write(STDOUT_FILENO, "\"", 1);
+		}
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
 }
@@ -45,15 +47,14 @@ void	builtin_export(t_cmd *cmd)
 	i = 1;
 	while (g_state.error == NO_ERROR && cmd->args[i] != NULL)
 	{
-		if (split_env_var(cmd->args[i], &var_name, &var_value))
+		if (is_valid_envp_identifier(cmd->args[i]) == false)
+			print_envp_token_error_msg(cmd->args[i], "export");
+		else
 		{
-			if (is_var_in_env(var_name) == true)
-				update_env_entry(cmd->args[i], var_name);
-			else
-				add_entry_to_env(cmd->args[i]);
-			free(var_name);
-			free(var_value);
+			split_env_var(cmd->args[i], &var_name, &var_value);
+			update_env_entry(var_name, var_value);
 		}
 		i++;
 	}
+	update_all_env();
 }

@@ -6,27 +6,28 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 10:22:05 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 23:14:16 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	update_env_entry(char *entry, char *var_name)
+void	update_env_entry(char *name, char *value)
 {
-	size_t	i;
+	t_envp_entry	*env_entry;
 
-	i = 0;
-	while (g_state.envp[i] != NULL)
+	env_entry = search_entry_in_env(name);
+	if (env_entry == NULL)
+		add_entry_to_env(name, value);
+	else if (value != NULL)
 	{
-		if (cmp_var_names(g_state.envp[i], var_name) == true)
-		{
-			free(g_state.envp[i]);
-			g_state.envp[i] = ft_strdup(entry);
-			if (g_state.envp[i] == NULL)
-				g_state.error = MALLOC_FAILED;
-			return ;
-		}
-		i++;
+		free(env_entry->value);
+		env_entry->value = value;
+		env_entry->is_declared = true;
+		free(env_entry->entry);
+		env_entry->entry = compose_new_env_entry(name, value);
+		free(name);
 	}
+	else
+		free(name);
 }

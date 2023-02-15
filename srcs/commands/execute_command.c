@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 17:09:48 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 15:59:04 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 13:32:38 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ void	execute_command(t_ast_node *node)
 	pid_t	pid;
 	int		status;
 
-	init_cmd(node);
-	if (node->cmd == NULL || g_state.error != NO_ERROR)
+	if (init_cmd(node) == false)
 		return ;
 	status = 0;
 	set_redirections(node->cmd);

@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   compose_new_entry.c                                :+:      :+:    :+:   */
+/*   search_entry_in_env.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/12 13:54:30 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 14:12:46 by pfrances         ###   ########.fr       */
+/*   Created: 2023/02/15 23:19:58 by pfrances          #+#    #+#             */
+/*   Updated: 2023/02/15 23:21:31 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*compose_new_env_entry(char *env_name, char *env_value)
+t_envp_entry	*search_entry_in_env(char *var_name)
 {
-	char	*new_entry;
+	size_t			i;
+	size_t			var_name_len;
+	t_envp_entry	*entry;
 
-	if (env_name == NULL)
+	if (var_name == NULL)
 		return (NULL);
-	if (env_value != NULL)
-		new_entry = strjoin_with_sep(ft_strdup(env_name), env_value, "=");
-	else
-		new_entry = ft_strjoin(env_name, "=");
-	if (new_entry == NULL)
-		g_state.error = MALLOC_FAILED;
-	return (new_entry);
+	var_name_len = ft_strlen(var_name);
+	i = 0;
+	while (g_state.envp_entries[i] != NULL)
+	{
+		entry = g_state.envp_entries[i];
+		if (ft_strncmp(entry->name, var_name, var_name_len + 1) == 0)
+			return (entry);
+		i++;
+	}
+	return (NULL);
 }

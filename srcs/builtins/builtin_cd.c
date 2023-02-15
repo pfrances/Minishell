@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 19:15:36 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/12 17:15:34 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 21:48:43 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,34 +43,20 @@ bool	go_to_previous_dir(char *old_dir, char **dir_to_go)
 	return (true);
 }
 
-void	move_and_actualise_env(char *old_dir, char *cur_dir,
-	char *dir_to_go, bool print_pwd)
+void	move_and_actualise_env(char *cur_dir, char *dir_to_go, bool print_pwd)
 {
-	char	*old_pwd_entry;
-	char	*new_pwd_entry;
 	char	*cwd;
 
-	old_pwd_entry = compose_new_env_entry("OLDPWD", cur_dir);
-	if (old_dir == NULL)
-		add_entry_to_env(old_pwd_entry);
-	else
-		update_env_entry(old_pwd_entry, "OLDPWD");
+	update_env_entry(ft_strdup("OLDPWD"), cur_dir);
 	if (chdir(dir_to_go) != 0)
 		perror(dir_to_go);
 	else
 	{
 		cwd = getcwd(NULL, 0);
-		new_pwd_entry = compose_new_env_entry("PWD", cwd);
-		if (cur_dir == NULL)
-			add_entry_to_env(new_pwd_entry);
-		else
-			update_env_entry(new_pwd_entry, "PWD");
+		update_env_entry(ft_strdup("PWD"), cwd);
 		if (print_pwd == true)
 			ft_putendl_fd(cwd, STDOUT_FILENO);
-		free(new_pwd_entry);
-		free(cwd);
 	}
-	free(old_pwd_entry);
 }
 
 void	builtin_cd(t_cmd *cmd)
@@ -98,6 +84,6 @@ void	builtin_cd(t_cmd *cmd)
 	}
 	else
 		dir_to_go = cmd->args[1];
-	move_and_actualise_env(old_dir, cur_dir, dir_to_go, print_pwd);
+	move_and_actualise_env(cur_dir, dir_to_go, print_pwd);
 	free_dir_env_value(home_dir, cur_dir, old_dir);
 }

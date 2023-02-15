@@ -6,13 +6,14 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/14 16:33:21 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/15 21:26:15 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+CFLAGS += -g -fsanitize=address
 INCLUDE = -I includes
 
 FT_PRINTF_DIR = ./ft_printf
@@ -65,7 +66,7 @@ COMMANDS_SRCS = $(addprefix $(COMMANDS_SRCS_DIR)/,	$(CMD_INIT_DIR)/allocate_cmd.
 													$(CMD_INIT_DIR)/wildcards.c				\
 													execute_ast.c			\
 													execute_command.c		\
-													execute_pipe.c			\
+													execute_pipeline.c		\
 													here_doc.c				\
 													open_files.c			\
 													set_reset_redir.c)
@@ -78,13 +79,15 @@ OBJS += $(COMMANDS_OBJS)
 ENVIRONMENT_SRCS_DIR = $(SRCS_DIR)/environment
 ENVIRONMENT_OBJS_DIR = $(OBJS_DIR)/environment
 ENVIRONMENT_SRCS = $(addprefix $(ENVIRONMENT_SRCS_DIR)/,	add_env_entry.c			\
-															cmp_var_names.c			\
-															compose_new_entry.c		\
+															check_envp_identifier.c	\
+															compose_new_env_entry.c	\
 															get_env_path_array.c	\
 															get_env_value.c			\
-															is_var_in_env.c			\
 															remove_env_entry.c		\
+															search_entry_in_env.c	\
+															set_up_envp.c			\
 															split_env_var.c			\
+															update_all_env.c		\
 															update_env_entry.c)
 ENVIRONMENT_OBJS = $(subst $(ENVIRONMENT_SRCS_DIR), $(ENVIRONMENT_OBJS_DIR), $(ENVIRONMENT_SRCS:.c=.o))
 SRCS += $(ENVIRONMENT_SRCS)
@@ -123,7 +126,6 @@ TOOLS_OBJS_DIR = $(OBJS_DIR)/tools
 TOOLS_SRCS = $(addprefix $(TOOLS_SRCS_DIR)/,		actualise_exit_status.c	\
 													array_tools.c			\
 													ft_split_charset.c		\
-													get_current_pid.c		\
 													quotes_tools.c			\
 													strjoin_with_sep.c)
 TOOLS_OBJS = $(subst $(TOOLS_SRCS_DIR), $(TOOLS_OBJS_DIR), $(TOOLS_SRCS:.c=.o))
@@ -136,11 +138,9 @@ OS = $(shell uname -s)
 ifeq ($(OS),Linux)
 READLINE = -L/usr/lib/x86_64-linux-gnu -lreadline
 INCLUDE += -I/usr/include/readline/
-CFLAGS += -D IOS=0
 else
 READLINE = -L$(shell brew --prefix readline)/lib -lreadline
 INCLUDE += -I$(shell brew --prefix readline)/include
-CFLAGS += -D IOS=1
 endif
 
 all: $(NAME)

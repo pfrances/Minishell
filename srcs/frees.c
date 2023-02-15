@@ -6,11 +6,28 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:44:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 15:36:48 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/15 22:47:19 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_envp(void)
+{
+	size_t	i;
+
+	i = 0;
+	while (g_state.envp_entries[i] != NULL)
+	{
+		free(g_state.envp_entries[i]->entry);
+		free(g_state.envp_entries[i]->name);
+		free(g_state.envp_entries[i]->value);
+		free(g_state.envp_entries[i]);
+		i++;
+	}
+	free(g_state.envp_entries);
+	free_array((void **)g_state.envp);
+}
 
 void	free_cmd(t_cmd *cmd)
 {
@@ -61,8 +78,8 @@ void	free_all(t_lexer *lexer, t_ast_node *ast_root)
 	if (g_state.error >= MALLOC_FAILED)
 	{
 		free_array((void **)lexer->tkn_types_array);
-		free_array((void **)g_state.envp);
 		free(g_state.exit_status_str);
+		free_envp();
 	}
 	free_lexer_list(lexer->list_head);
 	free(lexer->input);
