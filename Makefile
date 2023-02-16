@@ -6,7 +6,7 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/15 21:26:15 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/16 21:29:18 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -125,6 +125,7 @@ TOOLS_SRCS_DIR = $(SRCS_DIR)/tools
 TOOLS_OBJS_DIR = $(OBJS_DIR)/tools
 TOOLS_SRCS = $(addprefix $(TOOLS_SRCS_DIR)/,		actualise_exit_status.c	\
 													array_tools.c			\
+													atoi_with_check.c		\
 													ft_split_charset.c		\
 													quotes_tools.c			\
 													strjoin_with_sep.c)

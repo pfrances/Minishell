@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 23:18:03 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/16 21:46:24 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <termios.h>
+# include <limits.h>
 # include <dirent.h>
 # include <errno.h>
 # include <readline/readline.h>
@@ -305,6 +306,8 @@ void			free_array(void **array);
 void			**resize_array(void **array, int diff);
 char			**dup_array(char **array);
 size_t			array_len(void **array);
+/*				atoi_with_check.c					*/
+long long		ft_atol_with_error_check(const char *nptr, bool *valid_nbr);
 /*				ft_split_charset.c					*/
 char			**ft_split_charset(char *input, const char *charset);
 /*				quotes_tools.c							*/
