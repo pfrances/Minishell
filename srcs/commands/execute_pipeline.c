@@ -6,11 +6,24 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 23:19:40 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 23:21:25 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 10:37:34 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	set_up_pipeline(t_ast_node *node)
+{
+	if (g_state.error != NO_ERROR)
+		return ;
+	if (node->token->type == COMMAND)
+		init_cmd(node);
+	else if (node->token->type == PIPE)
+	{
+		set_up_pipeline(node->left);
+		set_up_pipeline(node->right);
+	}
+}
 
 void	execute_left_pipe(t_ast_node *node, int fd[])
 {
@@ -45,6 +58,7 @@ void	execute_pipeline(t_ast_node *node)
 	int		fd[2];
 	pid_t	pid;
 
+	set_up_pipeline(node);
 	if (g_state.error != NO_ERROR)
 		return ;
 	if (pipe(fd) == -1)

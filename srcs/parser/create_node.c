@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 13:42:33 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 13:35:59 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 10:47:53 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ t_ast_node	*create_node(t_lexer *lexer)
 	node->cmd = NULL;
 	node->left = NULL;
 	node->right = NULL;
+	node->has_been_init = false;
 	return (node);
 }

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/16 21:46:24 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 10:35:27 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ typedef struct s_ast_node
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 	t_cmd				*cmd;
+	bool				has_been_init;
 }	t_ast_node;
 /******************************************************************************/
 /**********************************lexer_struct********************************/

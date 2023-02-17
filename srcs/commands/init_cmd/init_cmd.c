@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:46:41 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 13:31:48 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 10:39:09 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,9 @@ t_cmd	*parse_cmd(char *lexem)
 
 bool	init_cmd(t_ast_node *node)
 {
+	if (node->has_been_init == true)
+		return (true);
+	node->has_been_init = true;
 	node->cmd = parse_cmd(node->token->lexem);
 	if (node->cmd == NULL)
 		return (false);
