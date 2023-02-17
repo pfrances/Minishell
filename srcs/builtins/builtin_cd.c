@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 19:15:36 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 21:48:43 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:39:45 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ void	move_and_actualise_env(char *cur_dir, char *dir_to_go, bool print_pwd)
 
 	update_env_entry(ft_strdup("OLDPWD"), cur_dir);
 	if (chdir(dir_to_go) != 0)
+	{
 		perror(dir_to_go);
+		g_state.exit_status = 1;
+	}
 	else
 	{
 		cwd = getcwd(NULL, 0);

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 21:05:34 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 17:29:38 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:15:21 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*search_env_var(char *lexem)
 	char	*name;
 
 	i = 0;
-	if (lexem[i] == '\0' || lexem[i] != '$')
+	if (lexem[i] != '$')
 		return (NULL);
 	i++;
 	if (lexem[i] != '$' || lexem[i] != '?')
@@ -74,24 +74,46 @@ void	expend_single_var(char **value, char **name, char **lexem, size_t *i)
 		g_state.error = MALLOC_FAILED;
 }
 
+char	*get_apropriate_value(char *name)
+{
+	char	*value;
+
+	if (name[1] == '?')
+	{
+		value = ft_strdup(g_state.exit_status_str);
+		if (value == NULL)
+			g_state.error = MALLOC_FAILED;
+	}
+	else if (name[1] == '$')
+	{
+		value = ft_strdup("`Unable to get PID`");
+		if (value == NULL)
+			g_state.error = MALLOC_FAILED;
+	}
+	else
+		value = get_env_value(&name[1]);
+	return (value);
+}
+
 char	*expand_env_var(char *lexem)
 {
 	size_t	i;
 	char	*name;
 	char	*value;
+	bool	on_double_quotes;
 
 	i = 0;
+	on_double_quotes = false;
 	while (g_state.error == NO_ERROR && lexem != NULL && lexem[i] != '\0')
 	{
-		if (lexem[i] == '\'')
+		if (lexem[i] == '\"')
+			on_double_quotes = !on_double_quotes;
+		if (lexem[i] == '\'' && on_double_quotes == false)
 			i += skip_simple_quote(&lexem[i]);
 		name = search_env_var(&lexem[i]);
 		if (name != NULL)
 		{
-			if (name[1] == '?')
-				value = ft_strdup(g_state.exit_status_str);
-			else
-				value = get_env_value(&name[1]);
+			value = get_apropriate_value(name);
 			expend_single_var(&value, &name, &lexem, &i);
 		}
 		else if (lexem[i] != '\0')

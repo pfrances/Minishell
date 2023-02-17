@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 15:16:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/11 18:18:07 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 18:07:17 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ char	*loop_on_every_file(char *token, DIR *current_dir)
 	entry = readdir(current_dir);
 	while (entry != NULL && g_state.error == NO_ERROR)
 	{
-		if (wildcards_match(token, entry->d_name) == true)
+		if (entry->d_name[0] == '.' && token[0] != '.')
+			;
+		else if (wildcards_match(token, entry->d_name) == true)
 		{
 			result = strjoin_with_sep(result, entry->d_name, " ");
 			if (result == NULL)

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 10:21:57 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 23:29:03 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 17:59:05 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	add_entry_to_env(char *name, char *value)
 	if (new_envp == NULL)
 		return ;
 	i = 0;
-	while (g_state.envp[i] != NULL)
+	while (g_state.envp_entries[i] != NULL)
 	{
 		new_envp[i] = g_state.envp_entries[i];
 		i++;

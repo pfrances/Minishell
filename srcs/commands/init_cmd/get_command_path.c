@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 18:22:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/13 09:53:02 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:07:09 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,27 +31,87 @@ char	*join_to_create_full_path(char *path, char *name)
 	return (full_path);
 }
 
-char	*get_cmd_path(char *name, char **env_paths)
+bool	check_permission(char *path)
 {
-	char	*path;
+	struct stat	path_stat;
+
+	if (stat(path, &path_stat) < 0)
+	{
+		perror("stat");
+		return (false);
+	}
+	if (S_ISREG(path_stat.st_mode))
+	{
+		if (access(path, X_OK) == 0)
+			return (true);
+	}
+	ft_putstr_fd(path, STDERR_FILENO);
+	if (S_ISDIR(path_stat.st_mode))
+		ft_putendl_fd(": Is a directory", STDERR_FILENO);
+	else if (S_ISLNK(path_stat.st_mode))
+		ft_putendl_fd(": Is a symbolic link", STDERR_FILENO);
+	else
+		ft_putendl_fd(": Permission denied", STDERR_FILENO);
+	actualise_exit_status(126);
+	return (false);
+}
+
+bool	is_a_path(char *name)
+{
 	size_t	i;
 
-	if (name == NULL)
-		return (NULL);
-	if (env_paths == NULL)
-		return (ft_strdup(name));
-	if (access(name, F_OK) == 0)
-		return (ft_strdup(name));
+	i = 0;
+	while (name[i] != '\0')
+	{
+		if (name[i] == '/')
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+char	*search_path_from_env_path(char *name, char **env_paths)
+{
+	size_t	i;
+	char	*path;
+
 	i = 0;
 	while (env_paths[i] != NULL && name[0] != '\0')
 	{
 		path = join_to_create_full_path(env_paths[i], name);
 		if (path == NULL)
+		{
+			g_state.error = MALLOC_FAILED;
 			return (NULL);
+		}
 		if (access(path, F_OK) == 0)
 			return (path);
 		free(path);
 		i++;
 	}
-	return (ft_strdup(name));
+	ft_putstr_fd(name, STDERR_FILENO);
+	ft_putendl_fd(": command not found", STDERR_FILENO);
+	actualise_exit_status(127);
+	return (NULL);
+}
+
+char	*get_cmd_path(char *name, char **env_paths)
+{
+	if (name == NULL)
+		return (NULL);
+	if (env_paths == NULL || is_a_path(name) == true)
+	{
+		if (access(name, F_OK) == 0)
+		{
+			if (check_permission(name) == true)
+				return (ft_strdup(name));
+			else
+				return (NULL);
+		}
+		perror(name);
+		actualise_exit_status(127);
+	}
+	else
+		return (search_path_from_env_path(name, env_paths));
+	return (NULL);
 }

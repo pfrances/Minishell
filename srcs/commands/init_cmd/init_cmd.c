@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 15:46:41 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/17 10:39:09 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 14:06:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,14 @@ void	set_up_cmd_struct(t_cmd *cmd, char *lexem)
 	cmd->input_fd_save = -1;
 	cmd->output_fd = STDOUT_FILENO;
 	cmd->output_fd_save = -1;
-	cmd->builtin_type = check_builtin_type(cmd->args);
-	if (cmd->builtin_type == NOT_BUILTIN)
+	cmd->cmd_type = check_builtin_type(cmd->args);
+	if (cmd->cmd_type == NOT_BUILTIN)
 	{
 		env_paths = get_env_path_array();
 		cmd->path = get_cmd_path(cmd->args[0], env_paths);
 		free_array((void **)env_paths);
+		if (cmd->path == NULL)
+			cmd->cmd_type = EMPTY_CMD;
 	}
 	else
 		cmd->path = NULL;

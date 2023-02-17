@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/17 10:35:27 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 18:01:27 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdbool.h>
-# include <termios.h>
 # include <limits.h>
 # include <dirent.h>
 # include <errno.h>
@@ -82,7 +81,7 @@ typedef struct s_command_cnt
 typedef struct s_cmd
 {
 	char			*path;
-	t_builtin_type	builtin_type;
+	t_builtin_type	cmd_type;
 	char			**args;
 	t_redirect		**redirect;
 	int				input_fd;

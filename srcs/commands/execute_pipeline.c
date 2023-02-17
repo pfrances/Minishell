@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 23:19:40 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/17 10:37:34 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/17 15:07:12 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	execute_left_pipe(t_ast_node *node, int fd[])
 void	execute_right_pipe(pid_t pid, t_ast_node *node, int fd[])
 {
 	int	input_save;
-	int	status;
 
 	close(fd[1]);
 	input_save = dup(STDIN_FILENO);
@@ -49,8 +48,7 @@ void	execute_right_pipe(pid_t pid, t_ast_node *node, int fd[])
 	execute_ast(node->right);
 	close(fd[0]);
 	dup2(input_save, STDIN_FILENO);
-	waitpid(pid, &status, 0);
-	actualise_exit_status(WEXITSTATUS(status));
+	waitpid(pid, NULL, 0);
 }
 
 void	execute_pipeline(t_ast_node *node)
