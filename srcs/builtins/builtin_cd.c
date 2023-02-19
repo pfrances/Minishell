@@ -6,16 +6,15 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 19:15:36 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/17 16:39:45 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:59:13 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_dir_env_value(char *home_dir, char *cur_dir, char *old_dir)
+void	free_dir_env_value(char *home_dir, char *old_dir)
 {
 	free(home_dir);
-	free(cur_dir);
 	free(old_dir);
 }
 
@@ -43,11 +42,13 @@ bool	go_to_previous_dir(char *old_dir, char **dir_to_go)
 	return (true);
 }
 
-void	move_and_actualise_env(char *cur_dir, char *dir_to_go, bool print_pwd)
+void	move_and_actualise_env(char *dir_to_go, bool print_pwd)
 {
 	char	*cwd;
 
-	update_env_entry(ft_strdup("OLDPWD"), cur_dir);
+	cwd = getcwd(NULL, 0);
+	update_env_entry(ft_strdup("OLDPWD"), cwd);
+	free(cwd);
 	if (chdir(dir_to_go) != 0)
 	{
 		perror(dir_to_go);
@@ -59,34 +60,34 @@ void	move_and_actualise_env(char *cur_dir, char *dir_to_go, bool print_pwd)
 		update_env_entry(ft_strdup("PWD"), cwd);
 		if (print_pwd == true)
 			ft_putendl_fd(cwd, STDOUT_FILENO);
+		free(cwd);
 	}
 }
 
 void	builtin_cd(t_cmd *cmd)
 {
 	char	*home_dir;
-	char	*cur_dir;
 	char	*old_dir;
 	char	*dir_to_go;
 	bool	print_pwd;
 
 	home_dir = get_env_value("HOME");
 	old_dir = get_env_value("OLDPWD");
-	cur_dir = get_env_value("PWD");
 	print_pwd = false;
 	if (cmd->args[1] == NULL)
 	{
 		if (go_to_home(home_dir, &dir_to_go) == false)
-			return (free_dir_env_value(home_dir, cur_dir, old_dir));
+			return (free_dir_env_value(home_dir, old_dir));
 	}
 	else if (cmd->args[1][0] == '-' && cmd->args[1][1] == '\0')
 	{
 		if (go_to_previous_dir(old_dir, &dir_to_go) == false)
-			return (free_dir_env_value(home_dir, cur_dir, old_dir));
+			return (free_dir_env_value(home_dir, old_dir));
 		print_pwd = true;
 	}
 	else
 		dir_to_go = cmd->args[1];
-	move_and_actualise_env(cur_dir, dir_to_go, print_pwd);
-	free_dir_env_value(home_dir, cur_dir, old_dir);
+	move_and_actualise_env(dir_to_go, print_pwd);
+	free_dir_env_value(home_dir, old_dir);
+	update_all_env();
 }

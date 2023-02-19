@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 19:58:52 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 22:49:27 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:38:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ bool	allocate_envp_ptr(void)
 			g_state.envp_entries[i]->is_declared = true;
 			ptr_count++;
 		}
-		else
-			g_state.envp_entries[i]->is_declared = false;
 		i++;
 	}
 	free_array((void **)g_state.envp);

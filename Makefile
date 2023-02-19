@@ -6,13 +6,14 @@
 #    By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/17 13:52:28 by pfrances          #+#    #+#              #
-#    Updated: 2023/02/19 12:08:52 by pfrances         ###   ########.fr        #
+#    Updated: 2023/02/19 15:54:41 by pfrances         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+CFLAGS += -g -fsanitize=address
 INCLUDE = -I includes
 
 FT_PRINTF_DIR = ./ft_printf

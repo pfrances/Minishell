@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 17:31:43 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/15 23:36:11 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 17:59:41 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_envp_entry	*set_one_envp_entry(char *entry_str)
 	return (entry);
 }
 
-t_envp_entry	**set_envp_entry(char **envp)
+t_envp_entry	**set_every_single_envp_entry(char **envp)
 {
 	size_t			i;
 	t_envp_entry	**entries;
@@ -69,11 +69,12 @@ bool	set_up_envp(char **envp)
 		g_state.error = MALLOC_FAILED;
 		return (false);
 	}
-	g_state.envp_entries = set_envp_entry(g_state.envp);
+	g_state.envp_entries = set_every_single_envp_entry(g_state.envp);
 	if (g_state.envp_entries == NULL)
 	{
 		g_state.error = MALLOC_FAILED;
 		return (false);
 	}
-	return (true);
+	update_env_entry(ft_strdup("SHELL"), ft_strdup("minishell"));
+	return (g_state.error == NO_ERROR);
 }
