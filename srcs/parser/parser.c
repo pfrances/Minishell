@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:55:02 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:13 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 10:26:50 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ t_ast_node	*parser_job(t_lexer *lexer)
 		g_state.error = SYNTAX_ERROR;
 		g_state.error_index = lexer->index;
 		g_state.error_index -= ft_strlen(lexer->current_token->lexem);
+		actualise_exit_status(2);
 	}
 	if (g_state.error == NO_ERROR)
 		g_state.current_phase = EXECUTING_CMD;

@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 17:24:54 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/10 10:36:46 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 10:39:40 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,15 @@ bool	update_last_command(t_lexer *lexer)
 	return (true);
 }
 
+void	set_syntax_error_parameter(t_lexer *lexer)
+{
+	g_state.error = SYNTAX_ERROR;
+	g_state.error_index = ft_strlen(lexer->input);
+	write(STDOUT_FILENO, "\n", 1);
+	lexer->input = strjoin_with_sep(lexer->input, "`EOF`", "");
+	actualise_exit_status(2);
+}
+
 bool	get_cmd_line_ending(t_lexer *lexer)
 {
 	char	*input;
@@ -51,7 +60,7 @@ bool	get_cmd_line_ending(t_lexer *lexer)
 		if (g_state.stop_signal_flag == true)
 			g_state.error = CMD_STOP;
 		else
-			g_state.error = PROGRAM_STOP;
+			set_syntax_error_parameter(lexer);
 		return (false);
 	}
 	if (lexer->current_token_type == COMMAND)

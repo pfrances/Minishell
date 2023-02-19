@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 11:58:27 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/17 11:05:44 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/19 10:21:52 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,8 @@ void	process_interrupt(int sig)
 {
 	g_state.stop_signal_flag = true;
 	if (g_state.current_phase == EXECUTING_CMD)
-	{
 		write(STDOUT_FILENO, "\n", 1);
-		actualise_exit_status(128 + sig);
-	}
+	actualise_exit_status(128 + sig);
 }
 
 void	ignore_signal(int sig)
