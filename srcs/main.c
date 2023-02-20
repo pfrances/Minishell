@@ -6,11 +6,13 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 12:32:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/19 17:34:07 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/20 11:55:07 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_pgrm_state	g_state;
 
 void	print_error_msg(t_lexer *lexer)
 {

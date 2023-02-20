@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 12:32:00 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/19 17:03:27 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/20 11:54:49 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ typedef struct s_pgrm_state
 	char				**envp;
 }	t_pgrm_state;
 /*		GLOBAL VARIABLE TO CURRENT STATE		*/
-t_pgrm_state	g_state;
+extern t_pgrm_state	g_state;
 
 /******************************************************************************/
 /********************************srcs/builtins*********************************/
