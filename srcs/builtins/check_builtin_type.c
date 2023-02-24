@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 20:11:19 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/14 15:22:43 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/24 12:54:26 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	has_option(char *arg1)
 	{
 		while (arg1[i] == '-')
 			i++;
-		if (arg1[i] != '\0' && ft_isspace(arg1[i]) != false)
+		if (arg1[i] != '\0' && ft_isspace(arg1[i]) == false)
 			return (true);
 	}
 	return (false);
