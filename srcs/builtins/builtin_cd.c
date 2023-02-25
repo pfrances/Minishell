@@ -6,7 +6,7 @@
 /*   By: pfrances <pfrances@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 19:15:36 by pfrances          #+#    #+#             */
-/*   Updated: 2023/02/19 16:59:13 by pfrances         ###   ########.fr       */
+/*   Updated: 2023/02/25 17:52:14 by pfrances         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	move_and_actualise_env(char *dir_to_go, bool print_pwd)
 
 	cwd = getcwd(NULL, 0);
 	update_env_entry(ft_strdup("OLDPWD"), cwd);
-	free(cwd);
 	if (chdir(dir_to_go) != 0)
 	{
 		perror(dir_to_go);
@@ -60,7 +59,6 @@ void	move_and_actualise_env(char *dir_to_go, bool print_pwd)
 		update_env_entry(ft_strdup("PWD"), cwd);
 		if (print_pwd == true)
 			ft_putendl_fd(cwd, STDOUT_FILENO);
-		free(cwd);
 	}
 }
 
